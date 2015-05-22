@@ -1,0 +1,91 @@
+
+header, footer, aside, nav, article {
+    display: block;
+}
+
+body {
+    margin: 0 auto;
+    width: 940px;
+    font: 13px/22px Helvetica, Arial, sans-serif;
+}
+
+h1 {
+    font-size: 30px;
+    line-height: 44px;
+    padding: 22px 0;
+}
+
+h2 {
+    font-size: 28px;
+    line-height: 44px;
+    padding: 22px 0;
+}
+ 
+h3 {
+    font-size: 24px;
+    line-height: 28px;
+}
+
+h4 {
+    font-size: 18px;
+    line-height: 22px;
+}
+ 
+p {
+    padding-bottom: 11px;
+}
+
+table
+{
+    border-collapse: collapse;
+}
+
+table th, td
+{
+    border: 1px solid black;
+    padding: 5px;
+}
+
+th
+{
+    background: #f5f5f5;
+}
+
+div.description p
+{
+    padding: 0px;
+}
+
+div.instruction-spec
+{
+    padding-bottom: 11px;
+    padding-left: 11px;
+    padding-right: 11px;
+    background: #f5f5f5;
+}
+
+div.condition-table
+{
+    padding-bottom: 11px;
+    padding-left: 11px;
+    padding-right: 11px;
+    background: #f5f5f5;
+}
+
+span.warning
+{
+    background: yellow;
+}
+
+.semantic
+{
+    padding-top: 11px;
+    padding-bottom: 11px;
+}
+
+.semantic code
+{
+    background: #d3d3d3;
+    width: 100%;
+}
+
