@@ -117,6 +117,14 @@
     </tr>
   </xsl:template>
 
+  <xsl:template match="oop">
+    <tr>
+      <td><xsl:value-of select="@name"/></td>
+      <td>Object</td>
+      <td><xsl:value-of select="@description"/></td>
+    </tr>
+  </xsl:template>
+
   <xsl:template match="int32">
     <tr>
       <td><xsl:value-of select="@name"/></td>
