@@ -101,6 +101,22 @@
     </table>
   </xsl:template>
 
+  <xsl:template match="local">
+    <tr>
+      <td><xsl:value-of select="@name"/></td>
+      <td>Native local offset</td>
+      <td><xsl:value-of select="@description"/></td>
+    </tr>
+  </xsl:template>
+
+  <xsl:template match="instance-var">
+    <tr>
+      <td><xsl:value-of select="@name"/></td>
+      <td>Instance variable offset</td>
+      <td><xsl:value-of select="@description"/></td>
+    </tr>
+  </xsl:template>
+
   <xsl:template match="extend-a">
     <tr>
       <td><xsl:value-of select="@name"/></td>
