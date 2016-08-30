@@ -3117,9 +3117,7 @@
             extA := 0.
         </semantic>
         <semantic language="Smalltalk/StackInterpreter">
-            "self externalizeIPandSP.
-            self LowcodeInterpreterCall: function Float32Result: result.
-            self internalizeIPandSP."
+            result := self lowcodeCalloutFloat32Result: (self cCoerce: function to: #'char*').
         </semantic>
     </instruction>
     <instruction opcode="1135" mnemonic="performCallFloat64" kind="operation">
@@ -3143,9 +3141,7 @@
             extA := 0.
         </semantic>
         <semantic language="Smalltalk/StackInterpreter">
-            "self externalizeIPandSP.
-            self LowcodeInterpreterCall: function Float64Result: result.
-            self internalizeIPandSP."
+            result := self lowcodeCalloutFloat64Result: (self cCoerce: function to: #'char*').
         </semantic>
     </instruction>
     <instruction opcode="1136" mnemonic="performCallIndirectFloat32" kind="operation">
@@ -3333,9 +3329,7 @@
             extA := 0.
         </semantic>
         <semantic language="Smalltalk/StackInterpreter">
-            "self externalizeIPandSP.
-            self LowcodeInterpreterCall: function Int32Result: result.
-            self internalizeIPandSP."
+            result := self lowcodeCalloutInt32Result: (self cCoerce: function to: #'char*').
         </semantic>
     </instruction>
     <instruction opcode="1143" mnemonic="performCallInt64" kind="operation">
@@ -3364,9 +3358,7 @@
             extA := 0.
         </semantic>
         <semantic language="Smalltalk/StackInterpreter">
-            "self externalizeIPandSP.
-            self LowcodeInterpreterCall: function Int64Result: result.
-            self internalizeIPandSP."
+            result := self lowcodeCalloutInt64Result: (self cCoerce: function to: #'char*').
         </semantic>
     </instruction>
     <instruction opcode="1144" mnemonic="performCallPointer" kind="operation">
@@ -3389,9 +3381,7 @@
             extA := 0.
         </semantic>
         <semantic language="Smalltalk/StackInterpreter">
-            "self externalizeIPandSP.
-            self LowcodeInterpreterCall: function PointerResult: result.
-            self internalizeIPandSP."
+            result := self lowcodeCalloutPointerResult: (self cCoerce: function to: #'char*').
         </semantic>
     </instruction>
     <instruction opcode="1145" mnemonic="performCallStructure" kind="operation">
@@ -3425,11 +3415,8 @@
             extB := 0.
         </semantic>
         <semantic language="Smalltalk/StackInterpreter">
-            "self LowcodeInterpreterCallArgumentPointer: result.
-
-            self externalizeIPandSP.
-            self LowcodeInterpreterCall: function StructureResult: resultPointer Size: structureSize.
-            self internalizeIPandSP."
+            self internalPushShadowCallStackPointer: result.
+            resultPointer := self lowcodeCalloutPointerResult: (self cCoerce: function to: #'char*').
         </semantic>
     </instruction>
     <instruction opcode="1146" mnemonic="plaftormCode" kind="operation">
@@ -3447,7 +3434,7 @@
         <name>Adds an offset to a pointer</name>
         <description>Computes a new pointer by offseting an old one.</description>
         <arguments>
-            <extend-a name="offset" />
+            <extend-b name="offset" />
         </arguments>
         <stack-arguments>
             <pointer name="base" />
