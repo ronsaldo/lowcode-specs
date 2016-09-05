@@ -573,7 +573,25 @@
             self internalPushShadowCallStackPointer: pointerValue.
         </semantic>
     </instruction>
-    <instruction opcode="1014" mnemonic="callArgumentStructure" kind="operation">
+    <instruction opcode="1014" mnemonic="callArgumentSpace" kind="operation">
+        <name>Push empty space call argument</name>
+        <description>Pushes an empty to the call stack.</description>
+        <arguments>
+            <extend-a name="spaceSize" />
+        </arguments>
+        <stack-arguments />
+        <stack-results />
+        <semantic language="Smalltalk/Cog/Raw">
+            "Allocate space"
+            self SubCq: extA R: SPReg.
+            currentCallCleanUpSize := currentCallCleanUpSize + extA.
+            extA := 0.
+        </semantic>
+        <semantic language="Smalltalk/StackInterpreter">
+            self internalPushShadowCallStackSpace: spaceSize.
+        </semantic>
+    </instruction>
+    <instruction opcode="1015" mnemonic="callArgumentStructure" kind="operation">
         <name>Push structure call argument</name>
         <description>Pushes a pointer to the call stack.</description>
         <arguments>
@@ -589,7 +607,8 @@
 	        self ssNativePop: 1.
 
             "Allocate space"
-            self SubCq: currentCallCleanUpSize R: SPReg .
+            self SubCq: extA R: SPReg.
+            currentCallCleanUpSize := currentCallCleanUpSize + extA.
 
             "Copy the structure"
             backEnd genMemCopy: TempReg to: SPReg constantSize: extA.
@@ -599,7 +618,7 @@
             self internalPushShadowCallStackStructure: structurePointer size: structureSize.
         </semantic>
     </instruction>
-    <instruction opcode="1015" mnemonic="callInstruction" kind="operation">
+    <instruction opcode="1016" mnemonic="callInstruction" kind="operation">
         <name>Low-Level call</name>
         <description>This instruction performs a Low-Level call.</description>
         <arguments>
@@ -611,7 +630,7 @@
             self CallRT: function.
         </semantic>
     </instruction>
-    <instruction opcode="1016" mnemonic="callPhysical" kind="operation">
+    <instruction opcode="1017" mnemonic="callPhysical" kind="operation">
         <name>Push Int32 from physical register</name>
         <description>Pushes an Int32 from a physical CPU register.</description>
         <arguments>
@@ -623,7 +642,7 @@
             self CallR: registerID.
         </semantic>
     </instruction>
-    <instruction opcode="1017" mnemonic="checkSessionIdentifier" kind="operation">
+    <instruction opcode="1018" mnemonic="checkSessionIdentifier" kind="operation">
         <name>Pushes true or false if the session ID matches</name>
         <description>Computes a new pointer by offseting an old one.</description>
         <arguments>
@@ -640,7 +659,7 @@
             value := (expectedSession = self getThisSessionID) ifTrue: [1] ifFalse: [0].
         </semantic>
     </instruction>
-    <instruction opcode="1018" mnemonic="compareAndSwap32" kind="operation">
+    <instruction opcode="1019" mnemonic="compareAndSwap32" kind="operation">
         <name>Compare and Swap 32 Bits</name>
         <description>
             Compares a 32 bit value in memory with a reference value,
@@ -658,7 +677,7 @@
             <int32 name="value" />
         </stack-results>
     </instruction>
-    <instruction opcode="1019" mnemonic="div32" kind="operation">
+    <instruction opcode="1020" mnemonic="div32" kind="operation">
         <name>Integer Signed Division</name>
         <description>Integer signed division without overflow check.</description>
         <arguments />
@@ -677,7 +696,7 @@
             result := first // second.
         </semantic>
     </instruction>
-    <instruction opcode="1020" mnemonic="div64" kind="operation">
+    <instruction opcode="1021" mnemonic="div64" kind="operation">
         <name>Integer Signed Division</name>
         <description>Integer signed division without overflow check.</description>
         <arguments />
@@ -692,7 +711,7 @@
             result := first // second.
         </semantic>
     </instruction>
-    <instruction opcode="1021" mnemonic="duplicateFloat32" kind="operation">
+    <instruction opcode="1022" mnemonic="duplicateFloat32" kind="operation">
         <name>Duplicate Float32</name>
         <description>It duplicates the Float32 present in the top of the stack</description>
         <arguments />
@@ -717,7 +736,7 @@
             dup2 := value.
         </semantic>
     </instruction>
-    <instruction opcode="1022" mnemonic="duplicateFloat64" kind="operation">
+    <instruction opcode="1023" mnemonic="duplicateFloat64" kind="operation">
         <name>Duplicate Float64</name>
         <description>It duplicates the Float64 present in the top of the stack</description>
         <arguments />
@@ -738,7 +757,7 @@
             dup2 := value.
         </semantic>
     </instruction>
-    <instruction opcode="1023" mnemonic="duplicateInt32" kind="operation">
+    <instruction opcode="1024" mnemonic="duplicateInt32" kind="operation">
         <name>Duplicate Int32</name>
         <description>It duplicates the Int32 present in the top of the stack</description>
         <arguments />
@@ -759,7 +778,7 @@
             dup2 := value.
         </semantic>
     </instruction>
-    <instruction opcode="1024" mnemonic="duplicateInt64" kind="operation">
+    <instruction opcode="1025" mnemonic="duplicateInt64" kind="operation">
         <name>Duplicate Int64</name>
         <description>It duplicates the Int64 present in the top of the stack</description>
         <arguments />
@@ -786,7 +805,7 @@
             self ssPushNativeRegister: dup2Low secondRegister: dup2High.
         </semantic>
     </instruction>
-    <instruction opcode="1025" mnemonic="duplicatePointer" kind="operation">
+    <instruction opcode="1026" mnemonic="duplicatePointer" kind="operation">
         <name>Duplicate Pointer</name>
         <description>It duplicates the pointer present in the top of the stack</description>
         <arguments />
@@ -807,7 +826,7 @@
             dup2 := pointerValue.
         </semantic>
     </instruction>
-    <instruction opcode="1026" mnemonic="effectiveAddress32" kind="operation">
+    <instruction opcode="1027" mnemonic="effectiveAddress32" kind="operation">
         <name>Compute Effective Address 32-bit</name>
         <description>It computes an effective address 32-bit factors.</description>
         <arguments />
@@ -830,7 +849,7 @@
             result := base + (index*scale) + offset.
         </semantic>
     </instruction>
-    <instruction opcode="1027" mnemonic="effectiveAddress64" kind="operation">
+    <instruction opcode="1028" mnemonic="effectiveAddress64" kind="operation">
         <name>Compute Effective Address 64-bit</name>
         <description>It computes an effective address using 64-bit factors.</description>
         <arguments />
@@ -847,7 +866,7 @@
             result := base + (index*scale) + offset.
         </semantic>
     </instruction>
-    <instruction opcode="1028" mnemonic="endCall" kind="operation">
+    <instruction opcode="1029" mnemonic="endCall" kind="operation">
         <name>End a function call.</name>
         <description>It ends a function call by cleaning the stack.</description>
         <arguments />
@@ -862,7 +881,7 @@
             self shadowCallStackPointerIn: localFP put: 1.
         </semantic>
     </instruction>
-    <instruction opcode="1029" mnemonic="endCallNoCleanup" kind="operation">
+    <instruction opcode="1030" mnemonic="endCallNoCleanup" kind="operation">
         <name>End a function call.</name>
         <description>It ends a function call without cleaning the stack.</description>
         <arguments />
@@ -877,7 +896,7 @@
             self shadowCallStackPointerIn: localFP put: 1.
         </semantic>
     </instruction>
-    <instruction opcode="1030" mnemonic="float32Add" kind="operation">
+    <instruction opcode="1031" mnemonic="float32Add" kind="operation">
         <name>Float32 addition</name>
         <description>It Performs the addition of two single precision floating point numbers.</description>
         <arguments />
@@ -896,7 +915,7 @@
             result := first + second.
         </semantic>
     </instruction>
-    <instruction opcode="1031" mnemonic="float32Div" kind="operation">
+    <instruction opcode="1032" mnemonic="float32Div" kind="operation">
         <name>Float32 division</name>
         <description>It performs the division of two single precision floating point numbers.</description>
         <arguments />
@@ -915,7 +934,7 @@
             result := first / second.
         </semantic>
     </instruction>
-    <instruction opcode="1032" mnemonic="float32Equal" kind="operation">
+    <instruction opcode="1033" mnemonic="float32Equal" kind="operation">
         <name>Float32 Equality</name>
         <description>Float32 equality.</description>
         <arguments />
@@ -945,7 +964,7 @@
             value := first = second ifTrue: [1] ifFalse: [0].
         </semantic>
     </instruction>
-    <instruction opcode="1033" mnemonic="float32Great" kind="operation">
+    <instruction opcode="1034" mnemonic="float32Great" kind="operation">
         <name>Float32 Great Than</name>
         <description>Float32 great than relationship.</description>
         <arguments />
@@ -975,7 +994,7 @@
             value := first &gt; second ifTrue: [1] ifFalse: [0].
         </semantic>
     </instruction>
-    <instruction opcode="1034" mnemonic="float32GreatEqual" kind="operation">
+    <instruction opcode="1035" mnemonic="float32GreatEqual" kind="operation">
         <name>Float32 Great or Equal Than</name>
         <description>Float32 great or equal than relationship.</description>
         <arguments />
@@ -1005,7 +1024,7 @@
             value := first &gt;= second ifTrue: [1] ifFalse: [0].
         </semantic>
     </instruction>
-    <instruction opcode="1035" mnemonic="float32Less" kind="operation">
+    <instruction opcode="1036" mnemonic="float32Less" kind="operation">
         <name>Float32 Less Than</name>
         <description>Float32 less than relationship.</description>
         <arguments />
@@ -1035,7 +1054,7 @@
             value := first &lt; second ifTrue: [1] ifFalse: [0].
         </semantic>
     </instruction>
-    <instruction opcode="1036" mnemonic="float32LessEqual" kind="operation">
+    <instruction opcode="1037" mnemonic="float32LessEqual" kind="operation">
         <name>Float32 Less or Eual Than</name>
         <description>Float32 less or equal than relationship.</description>
         <arguments />
@@ -1065,7 +1084,7 @@
             value := first &lt;= second ifTrue: [1] ifFalse: [0].
         </semantic>
     </instruction>
-    <instruction opcode="1037" mnemonic="float32Mul" kind="operation">
+    <instruction opcode="1038" mnemonic="float32Mul" kind="operation">
         <name>Float32 multiplication</name>
         <description>It performs the multiplication of two single precision floating point numbers.</description>
         <arguments />
@@ -1084,7 +1103,7 @@
             result := first * second.
         </semantic>
     </instruction>
-    <instruction opcode="1038" mnemonic="float32Neg" kind="operation">
+    <instruction opcode="1039" mnemonic="float32Neg" kind="operation">
         <name>Float32 negate</name>
         <description>It computes the negation of a single precision floating point value.</description>
         <arguments />
@@ -1103,7 +1122,7 @@
             result := value negated.
         </semantic>
     </instruction>
-    <instruction opcode="1039" mnemonic="float32NotEqual" kind="operation">
+    <instruction opcode="1040" mnemonic="float32NotEqual" kind="operation">
         <name>Float32 Inequality</name>
         <description>Float32 not equal.</description>
         <arguments />
@@ -1133,7 +1152,7 @@
             value := first ~= second ifTrue: [1] ifFalse: [0].
         </semantic>
     </instruction>
-    <instruction opcode="1040" mnemonic="float32Sqrt" kind="operation">
+    <instruction opcode="1041" mnemonic="float32Sqrt" kind="operation">
         <name>Float32 square root</name>
         <description>It computes the square root a single precision floating point number.</description>
         <arguments />
@@ -1151,7 +1170,7 @@
             result := self sqrt: value.
         </semantic>
     </instruction>
-    <instruction opcode="1041" mnemonic="float32Sub" kind="operation">
+    <instruction opcode="1042" mnemonic="float32Sub" kind="operation">
         <name>Float32 subtraction</name>
         <description>It performs the subtraction of two single precision floating point numbers.</description>
         <arguments />
@@ -1170,7 +1189,7 @@
             result := first - second.
         </semantic>
     </instruction>
-    <instruction opcode="1042" mnemonic="float32ToFloat64" kind="operation">
+    <instruction opcode="1043" mnemonic="float32ToFloat64" kind="operation">
         <name>Float32 to Float64</name>
         <description>It converts a single precision floating point number into
                     a double precision floating point number
@@ -1190,7 +1209,7 @@
             doubleResult := self cCoerce: singleFloatValue to: 'double'.
         </semantic>
     </instruction>
-    <instruction opcode="1043" mnemonic="float32ToInt32" kind="operation">
+    <instruction opcode="1044" mnemonic="float32ToInt32" kind="operation">
         <name>Float32 to Int32</name>
         <description>It converts single precision floating point number into 32-bit integer.</description>
         <arguments />
@@ -1208,7 +1227,7 @@
             result := self cCoerce: value to: 'sqInt'.
         </semantic>
     </instruction>
-    <instruction opcode="1044" mnemonic="float32ToInt64" kind="operation">
+    <instruction opcode="1045" mnemonic="float32ToInt64" kind="operation">
         <name>Float32 to Int64</name>
         <description>It converts a single precision floating point number into a 64-bit integer.</description>
         <arguments />
@@ -1222,7 +1241,7 @@
             result := self cCoerce: value to: 'sqLong'.
         </semantic>
     </instruction>
-    <instruction opcode="1045" mnemonic="float32ToUInt32" kind="operation">
+    <instruction opcode="1046" mnemonic="float32ToUInt32" kind="operation">
         <name>Float32 to UInt32</name>
         <description>It converts single precision floating point number into 32-bit integer.</description>
         <arguments />
@@ -1240,7 +1259,7 @@
             result := self cCoerce: value to: 'uint32_t'.
         </semantic>
     </instruction>
-    <instruction opcode="1046" mnemonic="float32ToUInt64" kind="operation">
+    <instruction opcode="1047" mnemonic="float32ToUInt64" kind="operation">
         <name>Float32 to UInt64</name>
         <description>It converts a single precision floating point number into a 64-bit integer.</description>
         <arguments />
@@ -1254,7 +1273,7 @@
             result := self cCoerce: value to: 'uint64_t'.
         </semantic>
     </instruction>
-    <instruction opcode="1047" mnemonic="float64Add" kind="operation">
+    <instruction opcode="1048" mnemonic="float64Add" kind="operation">
         <name>Float64 addition</name>
         <description>It performs the addition of two double precision floating point numbers.</description>
         <arguments />
@@ -1273,7 +1292,7 @@
             result := first + second.
         </semantic>
     </instruction>
-    <instruction opcode="1048" mnemonic="float64Div" kind="operation">
+    <instruction opcode="1049" mnemonic="float64Div" kind="operation">
         <name>Float64 division</name>
         <description>It performs the division of two double precision floating point numbers.</description>
         <arguments />
@@ -1292,7 +1311,7 @@
             result := first / second.
         </semantic>
     </instruction>
-    <instruction opcode="1049" mnemonic="float64Equal" kind="operation">
+    <instruction opcode="1050" mnemonic="float64Equal" kind="operation">
         <name>Float64 Equality</name>
         <description>Float64 equality.</description>
         <arguments />
@@ -1322,7 +1341,7 @@
             value := first = second ifTrue: [1] ifFalse: [0].
         </semantic>
     </instruction>
-    <instruction opcode="1050" mnemonic="float64Great" kind="operation">
+    <instruction opcode="1051" mnemonic="float64Great" kind="operation">
         <name>Float64 Great Than</name>
         <description>Float64 great than relationship.</description>
         <arguments />
@@ -1352,7 +1371,7 @@
             value := first &gt; second ifTrue: [1] ifFalse: [0].
         </semantic>
     </instruction>
-    <instruction opcode="1051" mnemonic="float64GreatEqual" kind="operation">
+    <instruction opcode="1052" mnemonic="float64GreatEqual" kind="operation">
         <name>Float64 Great or Equal Than</name>
         <description>Float64 great or equal than relationship.</description>
         <arguments />
@@ -1382,7 +1401,7 @@
             value := first &gt;= second ifTrue: [1] ifFalse: [0].
         </semantic>
     </instruction>
-    <instruction opcode="1052" mnemonic="float64Less" kind="operation">
+    <instruction opcode="1053" mnemonic="float64Less" kind="operation">
         <name>Float64 Less Than</name>
         <description>Float64 less than relationship.</description>
         <arguments />
@@ -1412,7 +1431,7 @@
             value := first &lt; second ifTrue: [1] ifFalse: [0].
         </semantic>
     </instruction>
-    <instruction opcode="1053" mnemonic="float64LessEqual" kind="operation">
+    <instruction opcode="1054" mnemonic="float64LessEqual" kind="operation">
         <name>Float64 Less or Equal Than</name>
         <description>Float32 less or equal than relationship.</description>
         <arguments />
@@ -1442,7 +1461,7 @@
             value := first &lt;= second ifTrue: [1] ifFalse: [0].
         </semantic>
     </instruction>
-    <instruction opcode="1054" mnemonic="float64Mul" kind="operation">
+    <instruction opcode="1055" mnemonic="float64Mul" kind="operation">
         <name>Float64 multiplication</name>
         <description>It performs the multiplication of two double precision floating point numbers.</description>
         <arguments />
@@ -1461,7 +1480,7 @@
             result := first * second.
         </semantic>
     </instruction>
-    <instruction opcode="1055" mnemonic="float64Neg" kind="operation">
+    <instruction opcode="1056" mnemonic="float64Neg" kind="operation">
         <name>Float64 negate</name>
         <description>It computes the negation of a double precision floating point value.</description>
         <arguments />
@@ -1480,7 +1499,7 @@
             result := value negated.
         </semantic>
     </instruction>
-    <instruction opcode="1056" mnemonic="float64NotEqual" kind="operation">
+    <instruction opcode="1057" mnemonic="float64NotEqual" kind="operation">
         <name>Float64 Inequality</name>
         <description>Float64 not equal.</description>
         <arguments />
@@ -1510,7 +1529,7 @@
             value := first ~= second ifTrue: [1] ifFalse: [0].
         </semantic>
     </instruction>
-    <instruction opcode="1057" mnemonic="float64Sqrt" kind="operation">
+    <instruction opcode="1058" mnemonic="float64Sqrt" kind="operation">
         <name>Float32 square root</name>
         <description>It computes the square root a single precision floating point number.</description>
         <arguments />
@@ -1528,7 +1547,7 @@
             result := self sqrt: value.
         </semantic>
     </instruction>
-    <instruction opcode="1058" mnemonic="float64Sub" kind="operation">
+    <instruction opcode="1059" mnemonic="float64Sub" kind="operation">
         <name>Float64 subtraction</name>
         <description>It performs the subtraction of two double precision floating point numbers.</description>
         <arguments />
@@ -1547,7 +1566,7 @@
             result := first - second.
         </semantic>
     </instruction>
-    <instruction opcode="1059" mnemonic="float64ToFloat32" kind="operation">
+    <instruction opcode="1060" mnemonic="float64ToFloat32" kind="operation">
         <name>Float64 to Float32</name>
         <description>It converts a double precision floating point number into
                     a single precision floating point number
@@ -1567,7 +1586,7 @@
             singleFloatResult := self cCoerce: floatValue to: 'float'.
         </semantic>
     </instruction>
-    <instruction opcode="1060" mnemonic="float64ToInt32" kind="operation">
+    <instruction opcode="1061" mnemonic="float64ToInt32" kind="operation">
         <name>Float64 to Int32</name>
         <description>It converts double precision floating point number into a 32-bit integer.</description>
         <arguments />
@@ -1585,7 +1604,7 @@
             int32Result := self cCoerce: floatValue to: 'sqInt'.
         </semantic>
     </instruction>
-    <instruction opcode="1061" mnemonic="float64ToInt64" kind="operation">
+    <instruction opcode="1062" mnemonic="float64ToInt64" kind="operation">
         <name>Float64 to Int64</name>
         <description>It converts a double precision floating point number into a 64-bit integer.</description>
         <arguments />
@@ -1599,7 +1618,7 @@
             int64Result := self cCoerce: floatValue to: 'sqLong'.
         </semantic>
     </instruction>
-    <instruction opcode="1062" mnemonic="float64ToUInt32" kind="operation">
+    <instruction opcode="1063" mnemonic="float64ToUInt32" kind="operation">
         <name>Float64 to UInt32</name>
         <description>It converts double precision floating point number into a 32-bit integer.</description>
         <arguments />
@@ -1617,7 +1636,7 @@
             int64Result := self cCoerce: floatValue to: 'uint32_t'.
         </semantic>
     </instruction>
-    <instruction opcode="1063" mnemonic="float64ToUInt64" kind="operation">
+    <instruction opcode="1064" mnemonic="float64ToUInt64" kind="operation">
         <name>Float64 to UInt64</name>
         <description>It converts a double precision floating point number into a 64-bit integer.</description>
         <arguments />
@@ -1631,7 +1650,7 @@
             int64Result := self cCoerce: floatValue to: 'uint64_t'.
         </semantic>
     </instruction>
-    <instruction opcode="1064" mnemonic="free" kind="operation">
+    <instruction opcode="1065" mnemonic="free" kind="operation">
         <name>Frees Memory</name>
         <description>
             Frees previously allocated memory in the heap.
@@ -1651,7 +1670,7 @@
             self free: pointer.
         </semantic>
     </instruction>
-    <instruction opcode="1065" mnemonic="instantiateIndexable32Oop" kind="operation">
+    <instruction opcode="1066" mnemonic="instantiateIndexable32Oop" kind="operation">
         <name>Instantiate an oop class</name>
         <description>It instantiates a class</description>
         <arguments />
@@ -1670,7 +1689,7 @@
             object := objectMemory instantiateClass: classOop indexableSize: indexableSize.
         </semantic>
     </instruction>
-    <instruction opcode="1066" mnemonic="instantiateIndexableOop" kind="operation">
+    <instruction opcode="1067" mnemonic="instantiateIndexableOop" kind="operation">
         <name>Instantiate an indexable class</name>
         <description>It instantiates a class</description>
         <arguments>
@@ -1690,7 +1709,7 @@
             object := objectMemory instantiateClass: classOop indexableSize: indexableSize.
         </semantic>
     </instruction>
-    <instruction opcode="1067" mnemonic="instantiateOop" kind="operation">
+    <instruction opcode="1068" mnemonic="instantiateOop" kind="operation">
         <name>Instantiate an oop class</name>
         <description>It instantiates a class</description>
         <arguments />
@@ -1708,7 +1727,7 @@
             object := objectMemory instantiateClass: classOop indexableSize: 0.
         </semantic>
     </instruction>
-    <instruction opcode="1068" mnemonic="int32Equal" kind="operation">
+    <instruction opcode="1069" mnemonic="int32Equal" kind="operation">
         <name>Int32 Equality</name>
         <description>Int32 equality.</description>
         <arguments />
@@ -1738,7 +1757,7 @@
             value := first = second ifTrue: [1] ifFalse: [0].
         </semantic>
     </instruction>
-    <instruction opcode="1069" mnemonic="int32Great" kind="operation">
+    <instruction opcode="1070" mnemonic="int32Great" kind="operation">
         <name>Int32 Great Than</name>
         <description>Int32 great than.</description>
         <arguments />
@@ -1768,7 +1787,7 @@
             value := first &gt; second ifTrue: [1] ifFalse: [0].
         </semantic>
     </instruction>
-    <instruction opcode="1070" mnemonic="int32GreatEqual" kind="operation">
+    <instruction opcode="1071" mnemonic="int32GreatEqual" kind="operation">
         <name>Int32 Great or EqualThan</name>
         <description>Int32 great or equal than.</description>
         <arguments />
@@ -1798,7 +1817,7 @@
             value := first &gt;= second ifTrue: [1] ifFalse: [0].
         </semantic>
     </instruction>
-    <instruction opcode="1071" mnemonic="int32Less" kind="operation">
+    <instruction opcode="1072" mnemonic="int32Less" kind="operation">
         <name>Int32 Less Than</name>
         <description>Int32 not equal.</description>
         <arguments />
@@ -1828,7 +1847,7 @@
             value := first &lt; second ifTrue: [1] ifFalse: [0].
         </semantic>
     </instruction>
-    <instruction opcode="1072" mnemonic="int32LessEqual" kind="operation">
+    <instruction opcode="1073" mnemonic="int32LessEqual" kind="operation">
         <name>Int32 Less or Equal Than</name>
         <description>Int32 less equal.</description>
         <arguments />
@@ -1858,7 +1877,7 @@
             value := first &lt;= second ifTrue: [1] ifFalse: [0].
         </semantic>
     </instruction>
-    <instruction opcode="1073" mnemonic="int32NotEqual" kind="operation">
+    <instruction opcode="1074" mnemonic="int32NotEqual" kind="operation">
         <name>Int32 Inequality</name>
         <description>Float32 not equal.</description>
         <arguments />
@@ -1888,7 +1907,7 @@
             value := first ~= second ifTrue: [1] ifFalse: [0].
         </semantic>
     </instruction>
-    <instruction opcode="1074" mnemonic="int32ToFloat32" kind="operation">
+    <instruction opcode="1075" mnemonic="int32ToFloat32" kind="operation">
         <name>Int32 to Float32</name>
         <description>Converts an unsigned integer into a floating point number.</description>
         <arguments />
@@ -1906,7 +1925,7 @@
             result := self cCoerce: value to: 'float'.
         </semantic>
     </instruction>
-    <instruction opcode="1075" mnemonic="int32ToFloat64" kind="operation">
+    <instruction opcode="1076" mnemonic="int32ToFloat64" kind="operation">
         <name>Int32 to Float64</name>
         <description>Converts an unsigned integer into a floating point number.</description>
         <arguments />
@@ -1924,7 +1943,7 @@
             result := self cCoerce: value to: 'double'.
         </semantic>
     </instruction>
-    <instruction opcode="1076" mnemonic="int32ToPointer" kind="operation">
+    <instruction opcode="1077" mnemonic="int32ToPointer" kind="operation">
         <name>Int32 to Pointer</name>
         <description>It converts a 32-bit integer into a pointer.</description>
         <arguments />
@@ -1942,7 +1961,7 @@
             result := self cCoerce: value to: 'uintptr_t'.
         </semantic>
     </instruction>
-    <instruction opcode="1077" mnemonic="int64Equal" kind="operation">
+    <instruction opcode="1078" mnemonic="int64Equal" kind="operation">
         <name>Int64 Equality</name>
         <description>Int64 equality.</description>
         <arguments />
@@ -1990,7 +2009,7 @@
             self ssPushNativeRegister: first.
         </semantic>
     </instruction>
-    <instruction opcode="1078" mnemonic="int64Great" kind="operation">
+    <instruction opcode="1079" mnemonic="int64Great" kind="operation">
         <name>Int64 Great Than</name>
         <description>Int64 great than.</description>
         <arguments />
@@ -2005,7 +2024,7 @@
             value := first &gt; second ifTrue: [1] ifFalse: [0].
         </semantic>
     </instruction>
-    <instruction opcode="1079" mnemonic="int64GreatEqual" kind="operation">
+    <instruction opcode="1080" mnemonic="int64GreatEqual" kind="operation">
         <name>Int64 Great or EqualThan</name>
         <description>Int64 great or equal than.</description>
         <arguments />
@@ -2020,7 +2039,7 @@
             value := first &gt;= second ifTrue: [1] ifFalse: [0].
         </semantic>
     </instruction>
-    <instruction opcode="1080" mnemonic="int64Less" kind="operation">
+    <instruction opcode="1081" mnemonic="int64Less" kind="operation">
         <name>Int64 Less Than</name>
         <description>Int64 not equal.</description>
         <arguments />
@@ -2035,7 +2054,7 @@
             value := first &lt; second ifTrue: [1] ifFalse: [0].
         </semantic>
     </instruction>
-    <instruction opcode="1081" mnemonic="int64LessEqual" kind="operation">
+    <instruction opcode="1082" mnemonic="int64LessEqual" kind="operation">
         <name>Int64 Less or Equal Than</name>
         <description>Int64 less equal.</description>
         <arguments />
@@ -2050,7 +2069,7 @@
             value := first &lt;= second ifTrue: [1] ifFalse: [0].
         </semantic>
     </instruction>
-    <instruction opcode="1082" mnemonic="int64NotEqual" kind="operation">
+    <instruction opcode="1083" mnemonic="int64NotEqual" kind="operation">
         <name>Int64 Inequality</name>
         <description>Float64 not equal.</description>
         <arguments />
@@ -2097,7 +2116,7 @@
             self ssPushNativeRegister: first.
         </semantic>
     </instruction>
-    <instruction opcode="1083" mnemonic="int64ToFloat32" kind="operation">
+    <instruction opcode="1084" mnemonic="int64ToFloat32" kind="operation">
         <name>Int64 to Float32</name>
         <description>Converts an unsigned integer into a floating point number.</description>
         <arguments />
@@ -2111,7 +2130,7 @@
             result := self cCoerce: value to: 'float'.
         </semantic>
     </instruction>
-    <instruction opcode="1084" mnemonic="int64ToFloat64" kind="operation">
+    <instruction opcode="1085" mnemonic="int64ToFloat64" kind="operation">
         <name>Int64 to Float64</name>
         <description>Converts an unsigned integer into a floating point number.</description>
         <arguments />
@@ -2125,7 +2144,7 @@
             result := self cCoerce: value to: 'double'.
         </semantic>
     </instruction>
-    <instruction opcode="1085" mnemonic="int64ToPointer" kind="operation">
+    <instruction opcode="1086" mnemonic="int64ToPointer" kind="operation">
         <name>Int64 to Pointer</name>
         <description>It converts a 64-bit integer into a pointer.</description>
         <arguments />
@@ -2147,7 +2166,7 @@
             self ssPushNativeRegister: value.
         </semantic>
     </instruction>
-    <instruction opcode="1086" mnemonic="leftShift32" kind="operation">
+    <instruction opcode="1087" mnemonic="leftShift32" kind="operation">
         <name>Left Shift</name>
         <description>Performs a left shifting.</description>
         <arguments />
@@ -2166,7 +2185,7 @@
             result := value &lt;&lt; shiftAmount.
         </semantic>
     </instruction>
-    <instruction opcode="1087" mnemonic="leftShift64" kind="operation">
+    <instruction opcode="1088" mnemonic="leftShift64" kind="operation">
         <name>Left Shift</name>
         <description>Performs a left shifting.</description>
         <arguments />
@@ -2181,7 +2200,250 @@
             result := value &lt;&lt; shiftAmount.
         </semantic>
     </instruction>
-    <instruction opcode="1088" mnemonic="loadFloat32FromMemory" kind="operation">
+    <instruction opcode="1089" mnemonic="loadArgumentAddress" kind="operation">
+        <name>Load native argument address</name>
+        <description>It loads a native argument address in the stack</description>
+        <arguments>
+            <native-argument name="baseOffset" />
+        </arguments>
+        <stack-arguments />
+        <stack-results>
+            <pointer name="pointer" allocate="true" />
+        </stack-results>
+        <semantic language="Smalltalk/Cog">
+            self loadNativeArgumentAddress: baseOffset to: pointer.
+            self ssPushNativeRegister: pointer.
+        </semantic>
+        <semantic language="Smalltalk/StackInterpreter">
+            pointer := self framePointerOfNativeArgument: baseOffset in: localFP.
+        </semantic>
+    </instruction>
+    <instruction opcode="1090" mnemonic="loadArgumentFloat32" kind="operation">
+        <name>Load single precision float native argument</name>
+        <description>It loads a single precision float from the native argument frame memory.</description>
+        <arguments>
+            <native-argument name="baseOffset" />
+        </arguments>
+        <stack-arguments />
+        <stack-results>
+            <float32 name="floatValue" allocate="true" />
+        </stack-results>
+        <semantic language="Smalltalk/Cog">
+            self loadNativeArgumentAddress: baseOffset to: TempReg.
+            self MoveM32: 0 r: TempReg Rs: floatValue.
+			self ssPushNativeRegisterSingleFloat: floatValue.
+        </semantic>
+        <semantic language="Smalltalk/StackInterpreter">
+            floatValue := stackPages singleFloatAtPointer: (self framePointerOfNativeArgument: baseOffset in: localFP).
+        </semantic>
+    </instruction>
+    <instruction opcode="1091" mnemonic="loadArgumentFloat64" kind="operation">
+        <name>Load double precision float from native argument</name>
+        <description>It loads a double precision float from the native argument frame memory.</description>
+        <arguments>
+            <native-argument name="baseOffset" />
+        </arguments>
+        <stack-arguments />
+        <stack-results>
+            <float64 name="doubleValue" allocate="true" />
+        </stack-results>
+        <semantic language="Smalltalk/Cog">
+            self loadNativeArgumentAddress: baseOffset to: TempReg.
+            self MoveM64: 0 r: TempReg Rd: doubleValue.
+			self ssPushNativeRegisterDoubleFloat: doubleValue.
+        </semantic>
+        <semantic language="Smalltalk/StackInterpreter">
+            doubleValue := stackPages floatAtPointer: (self framePointerOfNativeArgument: baseOffset in: localFP).
+        </semantic>
+    </instruction>
+    <instruction opcode="1092" mnemonic="loadArgumentInt16" kind="operation">
+        <name>Load I16 native argument</name>
+        <description>It Loads an U16 from the native argument frame memory.</description>
+        <arguments>
+            <native-argument name="baseOffset" />
+        </arguments>
+        <stack-arguments />
+        <stack-results>
+            <int32 name="value" allocate="true" />
+        </stack-results>
+        <semantic language="Smalltalk/Cog">
+            self loadNativeArgumentAddress: baseOffset to: TempReg.
+            self MoveM16: 0 r: TempReg R: value.
+            self SignExtend16R: value R: value.
+			self ssPushNativeRegister: value.
+        </semantic>
+        <semantic language="Smalltalk/StackInterpreter">
+            value := stackPages int16AtPointer: (self framePointerOfNativeArgument: baseOffset in: localFP).
+        </semantic>
+    </instruction>
+    <instruction opcode="1093" mnemonic="loadArgumentInt32" kind="operation">
+        <name>Load I32 native argument</name>
+        <description>It Loads an U32 from the native argument frame memory.</description>
+        <arguments>
+            <native-argument name="baseOffset" />
+        </arguments>
+        <stack-arguments />
+        <stack-results>
+            <int32 name="value" allocate="true" />
+        </stack-results>
+        <semantic language="Smalltalk/Cog">
+            self loadNativeArgumentAddress: baseOffset to: TempReg.
+            self MoveM32: 0 r: TempReg R: value.
+			self ssPushNativeRegister: value.
+        </semantic>
+        <semantic language="Smalltalk/StackInterpreter">
+            value := stackPages int32AtPointer: (self framePointerOfNativeArgument: baseOffset in: localFP).
+        </semantic>
+    </instruction>
+    <instruction opcode="1094" mnemonic="loadArgumentInt64" kind="operation">
+        <name>Load I64 native argument</name>
+        <description>It Loads an I64 from the native argument frme memory.</description>
+        <arguments>
+            <native-argument name="baseOffset" />
+        </arguments>
+        <stack-arguments />
+        <stack-results>
+            <int64 name="value" allocate="true" />
+        </stack-results>
+        <semantic language="Smalltalk/StackInterpreter">
+            value := stackPages int64AtPointer: (self framePointerOfNativeArgument: baseOffset in: localFP).
+        </semantic>
+        <semantic language="Smalltalk/Cog/32">
+            "TODO: Check the endianness"
+            self loadNativeArgumentAddress: baseOffset to: TempReg.
+            self MoveM32: 0 r: TempReg R: valueLow.
+            self MoveM32: 4 r: TempReg R: valueHigh.
+			self ssPushNativeRegister: valueLow secondRegister: valueHigh.
+        </semantic>
+        <semantic language="Smalltalk/Cog/64">
+            self loadNativeArgumentAddress: baseOffset to: TempReg.
+            self MoveM64: 0 r: TempReg R: value.
+			self ssPushNativeRegister: value.
+        </semantic>
+    </instruction>
+    <instruction opcode="1095" mnemonic="loadArgumentInt8" kind="operation">
+        <name>Load I8 native argument</name>
+        <description>It Loads an U8 from the stack frame memory.</description>
+        <arguments>
+            <native-argument name="baseOffset" />
+        </arguments>
+        <stack-arguments />
+        <stack-results>
+            <int32 name="value" allocate="true" />
+        </stack-results>
+        <semantic language="Smalltalk/Cog">
+            self loadNativeArgumentAddress: baseOffset to: TempReg.
+            self MoveM8: 0 r: TempReg R: value.
+            self SignExtend8R: value R: value.
+			self ssPushNativeRegister: value.
+        </semantic>
+        <semantic language="Smalltalk/StackInterpreter">
+            value := stackPages int8AtPointer: (self framePointerOfNativeArgument: baseOffset in: localFP).
+        </semantic>
+    </instruction>
+    <instruction opcode="1096" mnemonic="loadArgumentPointer" kind="operation">
+        <name>Load pointer native argument</name>
+        <description>It loads a pointer from the stack frame memory.</description>
+        <arguments>
+            <native-argument name="baseOffset" />
+        </arguments>
+        <stack-arguments />
+        <stack-results>
+            <pointer name="pointerResult" allocate="true" />
+        </stack-results>
+        <semantic language="Smalltalk/Cog">
+            self loadNativeArgumentAddress: baseOffset to: TempReg.
+            self MoveMw: 0 r: TempReg R: pointerResult.
+			self ssPushNativeRegister: pointerResult.
+        </semantic>
+        <semantic language="Smalltalk/StackInterpreter">
+            pointerResult := stackPages pointerAtPointer: (self framePointerOfNativeArgument: baseOffset in: localFP).
+        </semantic>
+    </instruction>
+    <instruction opcode="1097" mnemonic="loadArgumentUInt16" kind="operation">
+        <name>Load U16 native argument</name>
+        <description>It Loads an U16 from the stack frame memory.</description>
+        <arguments>
+            <native-argument name="baseOffset" />
+        </arguments>
+        <stack-arguments />
+        <stack-results>
+            <int32 name="value" allocate="true" />
+        </stack-results>
+        <semantic language="Smalltalk/Cog">
+            self loadNativeArgumentAddress: baseOffset to: TempReg.
+            self MoveM16: 0 r: TempReg R: value.
+			self ssPushNativeRegister: value.
+        </semantic>
+        <semantic language="Smalltalk/StackInterpreter">
+            value := stackPages uint16AtPointer: (self framePointerOfNativeArgument: baseOffset in: localFP).
+        </semantic>
+    </instruction>
+    <instruction opcode="1098" mnemonic="loadArgumentUInt32" kind="operation">
+        <name>Load U32 native argument</name>
+        <description>It Loads an U32 from the stack frame memory.</description>
+        <arguments>
+            <native-argument name="baseOffset" />
+        </arguments>
+        <stack-arguments />
+        <stack-results>
+            <int32 name="value" allocate="true" />
+        </stack-results>
+        <semantic language="Smalltalk/Cog">
+            self loadNativeArgumentAddress: baseOffset to: TempReg.
+            self MoveM32: 0 r: TempReg R: value.
+			self ssPushNativeRegister: value.
+        </semantic>
+        <semantic language="Smalltalk/StackInterpreter">
+            value := stackPages uint32AtPointer: (self framePointerOfNativeArgument: baseOffset in: localFP).
+        </semantic>
+    </instruction>
+    <instruction opcode="1099" mnemonic="loadArgumentUInt64" kind="operation">
+        <name>Load U8 native argument</name>
+        <description>It Loads an U8 from the stack frame memory.</description>
+        <arguments>
+            <native-argument name="baseOffset" />
+        </arguments>
+        <stack-arguments />
+        <stack-results>
+            <int64 name="value" allocate="true" />
+        </stack-results>
+        <semantic language="Smalltalk/StackInterpreter">
+            value := stackPages uint64AtPointer: (self framePointerOfNativeArgument: baseOffset in: localFP).
+        </semantic>
+        <semantic language="Smalltalk/Cog/32">
+            "TODO: Check the endianness"
+            self loadNativeArgumentAddress: baseOffset to: TempReg.
+            self MoveM32: 0 r: TempReg R: valueLow.
+            self MoveM32: 4 r: TempReg R: valueHigh.
+			self ssPushNativeRegister: valueLow secondRegister: valueHigh.
+        </semantic>
+        <semantic language="Smalltalk/Cog/64">
+            self loadNativeArgumentAddress: baseOffset to: TempReg.
+            self MoveM64: 0 r: TempReg R: value.
+			self ssPushNativeRegister: value.
+        </semantic>
+    </instruction>
+    <instruction opcode="1100" mnemonic="loadArgumentUInt8" kind="operation">
+        <name>Load U8 native argument</name>
+        <description>It Loads an U8 from the stack frame memory.</description>
+        <arguments>
+            <native-argument name="baseOffset" />
+        </arguments>
+        <stack-arguments />
+        <stack-results>
+            <int32 name="value" allocate="true" />
+        </stack-results>
+        <semantic language="Smalltalk/Cog">
+            self loadNativeArgumentAddress: baseOffset to: TempReg.
+            self MoveM8: 0 r: TempReg R: value.
+			self ssPushNativeRegister: value.
+        </semantic>
+        <semantic language="Smalltalk/StackInterpreter">
+            value := stackPages uint8AtPointer: (self framePointerOfNativeArgument: baseOffset in: localFP).
+        </semantic>
+    </instruction>
+    <instruction opcode="1101" mnemonic="loadFloat32FromMemory" kind="operation">
         <name>Load Float 32 from Memory</name>
         <description>Loads a float 32 from memory.</description>
         <arguments />
@@ -2199,7 +2461,7 @@
             value := self singleFloatAtPointer: pointer.
         </semantic>
     </instruction>
-    <instruction opcode="1089" mnemonic="loadFloat64FromMemory" kind="operation">
+    <instruction opcode="1102" mnemonic="loadFloat64FromMemory" kind="operation">
         <name>Load Float 64 from Memory</name>
         <description>Loads a float 64 from.</description>
         <arguments />
@@ -2217,7 +2479,7 @@
             value := self floatAtPointer: pointer.
         </semantic>
     </instruction>
-    <instruction opcode="1090" mnemonic="loadInt16FromMemory" kind="operation">
+    <instruction opcode="1103" mnemonic="loadInt16FromMemory" kind="operation">
         <name>Load U16 from Memory</name>
         <description>Loads an U16 from memory.</description>
         <arguments />
@@ -2236,7 +2498,7 @@
             value := self int16AtPointer: pointer.
         </semantic>
     </instruction>
-    <instruction opcode="1091" mnemonic="loadInt32FromMemory" kind="operation">
+    <instruction opcode="1104" mnemonic="loadInt32FromMemory" kind="operation">
         <name>Load I32 from Memory</name>
         <description>Loads an I32 from memory.</description>
         <arguments />
@@ -2254,7 +2516,7 @@
             value := self int32AtPointer: pointer.
         </semantic>
     </instruction>
-    <instruction opcode="1092" mnemonic="loadInt64FromMemory" kind="operation">
+    <instruction opcode="1105" mnemonic="loadInt64FromMemory" kind="operation">
         <name>Load I64 from Memory</name>
         <description>Loads an I64 from memory.</description>
         <arguments />
@@ -2278,7 +2540,7 @@
 			self ssPushNativeRegister: value.
         </semantic>
     </instruction>
-    <instruction opcode="1093" mnemonic="loadInt8FromMemory" kind="operation">
+    <instruction opcode="1106" mnemonic="loadInt8FromMemory" kind="operation">
         <name>Load I8 from Memory</name>
         <description>Loads an I8 from memory.</description>
         <arguments />
@@ -2297,7 +2559,7 @@
             value := self int8AtPointer: pointer.
         </semantic>
     </instruction>
-    <instruction opcode="1094" mnemonic="loadLocalAddress" kind="operation">
+    <instruction opcode="1107" mnemonic="loadLocalAddress" kind="operation">
         <name>Load local address</name>
         <description>It loads a local variable address in the stack</description>
         <arguments>
@@ -2315,7 +2577,7 @@
             pointer := self framePointerOfNativeLocal: baseOffset in: localFP.
         </semantic>
     </instruction>
-    <instruction opcode="1095" mnemonic="loadLocalFloat32" kind="operation">
+    <instruction opcode="1108" mnemonic="loadLocalFloat32" kind="operation">
         <name>Load single precision float from stack</name>
         <description>It loads a single precision float from the stack frame memory.</description>
         <arguments>
@@ -2334,7 +2596,7 @@
             floatValue := stackPages singleFloatAtPointer: (self framePointerOfNativeLocal: baseOffset in: localFP).
         </semantic>
     </instruction>
-    <instruction opcode="1096" mnemonic="loadLocalFloat64" kind="operation">
+    <instruction opcode="1109" mnemonic="loadLocalFloat64" kind="operation">
         <name>Load double precision float from stack</name>
         <description>It loads a double precision float from the stack frame memory.</description>
         <arguments>
@@ -2353,7 +2615,7 @@
             doubleValue := stackPages floatAtPointer: (self framePointerOfNativeLocal: baseOffset in: localFP).
         </semantic>
     </instruction>
-    <instruction opcode="1097" mnemonic="loadLocalInt16" kind="operation">
+    <instruction opcode="1110" mnemonic="loadLocalInt16" kind="operation">
         <name>Load I16 from stack</name>
         <description>It Loads an U16 from the stack frame memory.</description>
         <arguments>
@@ -2373,7 +2635,7 @@
             value := stackPages int16AtPointer: (self framePointerOfNativeLocal: baseOffset in: localFP).
         </semantic>
     </instruction>
-    <instruction opcode="1098" mnemonic="loadLocalInt32" kind="operation">
+    <instruction opcode="1111" mnemonic="loadLocalInt32" kind="operation">
         <name>Load I32 from stack</name>
         <description>It Loads an U32 from the stack frame memory.</description>
         <arguments>
@@ -2392,7 +2654,7 @@
             value := stackPages int32AtPointer: (self framePointerOfNativeLocal: baseOffset in: localFP).
         </semantic>
     </instruction>
-    <instruction opcode="1099" mnemonic="loadLocalInt64" kind="operation">
+    <instruction opcode="1112" mnemonic="loadLocalInt64" kind="operation">
         <name>Load I64 from stack</name>
         <description>It Loads an I64 from the stack frame memory.</description>
         <arguments>
@@ -2418,7 +2680,7 @@
 			self ssPushNativeRegister: value.
         </semantic>
     </instruction>
-    <instruction opcode="1100" mnemonic="loadLocalInt8" kind="operation">
+    <instruction opcode="1113" mnemonic="loadLocalInt8" kind="operation">
         <name>Load I8 from stack</name>
         <description>It Loads an U8 from the stack frame memory.</description>
         <arguments>
@@ -2438,7 +2700,7 @@
             value := stackPages int8AtPointer: (self framePointerOfNativeLocal: baseOffset in: localFP).
         </semantic>
     </instruction>
-    <instruction opcode="1101" mnemonic="loadLocalPointer" kind="operation">
+    <instruction opcode="1114" mnemonic="loadLocalPointer" kind="operation">
         <name>Load pointer from stack</name>
         <description>It loads a pointer from the stack frame memory.</description>
         <arguments>
@@ -2457,7 +2719,7 @@
             pointerResult := stackPages pointerAtPointer: (self framePointerOfNativeLocal: baseOffset in: localFP).
         </semantic>
     </instruction>
-    <instruction opcode="1102" mnemonic="loadLocalUInt16" kind="operation">
+    <instruction opcode="1115" mnemonic="loadLocalUInt16" kind="operation">
         <name>Load U16 from stack</name>
         <description>It Loads an U16 from the stack frame memory.</description>
         <arguments>
@@ -2476,7 +2738,7 @@
             value := stackPages uint16AtPointer: (self framePointerOfNativeLocal: baseOffset in: localFP).
         </semantic>
     </instruction>
-    <instruction opcode="1103" mnemonic="loadLocalUInt32" kind="operation">
+    <instruction opcode="1116" mnemonic="loadLocalUInt32" kind="operation">
         <name>Load U32 from stack</name>
         <description>It Loads an U32 from the stack frame memory.</description>
         <arguments>
@@ -2495,7 +2757,7 @@
             value := stackPages uint32AtPointer: (self framePointerOfNativeLocal: baseOffset in: localFP).
         </semantic>
     </instruction>
-    <instruction opcode="1104" mnemonic="loadLocalUInt64" kind="operation">
+    <instruction opcode="1117" mnemonic="loadLocalUInt64" kind="operation">
         <name>Load U8 from stack</name>
         <description>It Loads an U8 from the stack frame memory.</description>
         <arguments>
@@ -2521,7 +2783,7 @@
 			self ssPushNativeRegister: value.
         </semantic>
     </instruction>
-    <instruction opcode="1105" mnemonic="loadLocalUInt8" kind="operation">
+    <instruction opcode="1118" mnemonic="loadLocalUInt8" kind="operation">
         <name>Load U8 from stack</name>
         <description>It Loads an U8 from the stack frame memory.</description>
         <arguments>
@@ -2540,7 +2802,7 @@
             value := stackPages uint8AtPointer: (self framePointerOfNativeLocal: baseOffset in: localFP).
         </semantic>
     </instruction>
-    <instruction opcode="1106" mnemonic="loadObjectAt" kind="operation">
+    <instruction opcode="1119" mnemonic="loadObjectAt" kind="operation">
         <name>Load an object field.</name>
         <description>This instruction loads the value of an object.</description>
         <arguments />
@@ -2558,7 +2820,7 @@
             fieldValue := objectMemory fetchPointer: fieldIndex ofObject: object.
         </semantic>
     </instruction>
-    <instruction opcode="1107" mnemonic="loadObjectField" kind="operation">
+    <instruction opcode="1120" mnemonic="loadObjectField" kind="operation">
         <name>Load an object field.</name>
         <description>This instruction loads the value of an object.</description>
         <arguments>
@@ -2577,7 +2839,7 @@
             fieldValue := self fetchPointer: fieldIndex ofObject: object.
         </semantic>
     </instruction>
-    <instruction opcode="1108" mnemonic="loadPointerFromMemory" kind="operation">
+    <instruction opcode="1121" mnemonic="loadPointerFromMemory" kind="operation">
         <name>Load Pointer from Memory</name>
         <description>Loads a pointer from memory.</description>
         <arguments />
@@ -2595,7 +2857,7 @@
             pointerResult := self pointerAtPointer: pointer.
         </semantic>
     </instruction>
-    <instruction opcode="1109" mnemonic="loadUInt16FromMemory" kind="operation">
+    <instruction opcode="1122" mnemonic="loadUInt16FromMemory" kind="operation">
         <name>Load U16 from Memory</name>
         <description>It loads an U16 from memory.</description>
         <arguments />
@@ -2613,7 +2875,7 @@
             value := self uint16AtPointer: pointer.
         </semantic>
     </instruction>
-    <instruction opcode="1110" mnemonic="loadUInt32FromMemory" kind="operation">
+    <instruction opcode="1123" mnemonic="loadUInt32FromMemory" kind="operation">
         <name>Load U32 from Memory</name>
         <description>Loads an U32 from memory.</description>
         <arguments />
@@ -2631,7 +2893,7 @@
             value := self uint32AtPointer: pointer.
         </semantic>
     </instruction>
-    <instruction opcode="1111" mnemonic="loadUInt64FromMemory" kind="operation">
+    <instruction opcode="1124" mnemonic="loadUInt64FromMemory" kind="operation">
         <name>Load U64 from Memory</name>
         <description>Loads an U64 from memory.</description>
         <arguments />
@@ -2655,7 +2917,7 @@
 			self ssPushNativeRegister: value.
         </semantic>
     </instruction>
-    <instruction opcode="1112" mnemonic="loadUInt8FromMemory" kind="operation">
+    <instruction opcode="1125" mnemonic="loadUInt8FromMemory" kind="operation">
         <name>Load U8 from Memory</name>
         <description>Loads an U8 from memory.</description>
         <arguments />
@@ -2673,7 +2935,7 @@
             value := self uint8AtPointer: pointer.
         </semantic>
     </instruction>
-    <instruction opcode="1113" mnemonic="localFrameSize" kind="metadata">
+    <instruction opcode="1126" mnemonic="localFrameSize" kind="metadata">
         <name>Local Frame Size</name>
         <description>This instruction is used to describe the size of the local frame.</description>
         <arguments>
@@ -2725,7 +2987,7 @@
             nativeStackPointer := nativeStackPointer - self defaultNativeStackFrameSize.
         </semantic>
     </instruction>
-    <instruction opcode="1114" mnemonic="lockRegisters" kind="operation">
+    <instruction opcode="1127" mnemonic="lockRegisters" kind="operation">
         <name>Lock Registers</name>
         <description>
             Locks the CPU register. This tells the register allocator that the
@@ -2738,14 +3000,14 @@
             self ssFlushAll.
         </semantic>
     </instruction>
-    <instruction opcode="1115" mnemonic="lockVM" kind="operation">
+    <instruction opcode="1128" mnemonic="lockVM" kind="operation">
         <name>Lock VM</name>
         <description>Locks the VM to the current thread.</description>
         <arguments />
         <stack-arguments />
         <stack-results />
     </instruction>
-    <instruction opcode="1116" mnemonic="malloc32" kind="operation">
+    <instruction opcode="1129" mnemonic="malloc32" kind="operation">
         <name>Malloc</name>
         <description>
             Allocates memory from heap
@@ -2770,7 +3032,7 @@
             pointer := self malloc: size.
         </semantic>
     </instruction>
-    <instruction opcode="1117" mnemonic="malloc64" kind="operation">
+    <instruction opcode="1130" mnemonic="malloc64" kind="operation">
         <name>Malloc</name>
         <description>
             Allocates memory from heap
@@ -2804,7 +3066,7 @@
             self ssPushNativeRegister: pointer.
         </semantic>
     </instruction>
-    <instruction opcode="1118" mnemonic="memcpy32" kind="operation">
+    <instruction opcode="1131" mnemonic="memcpy32" kind="operation">
         <name>Copies a block of memory</name>
         <description>Copies a block of memory</description>
         <arguments />
@@ -2822,7 +3084,7 @@
             backEnd genMemCopy: source to: dest size: size.
         </semantic>
     </instruction>
-    <instruction opcode="1119" mnemonic="memcpy64" kind="operation">
+    <instruction opcode="1132" mnemonic="memcpy64" kind="operation">
         <name>Copies a block of memory</name>
         <description>Copies a block of memory</description>
         <arguments />
@@ -2840,7 +3102,7 @@
             backEnd genMemCopy: source to: dest size: sizeLow.
         </semantic>
     </instruction>
-    <instruction opcode="1120" mnemonic="memcpyFixed" kind="operation">
+    <instruction opcode="1133" mnemonic="memcpyFixed" kind="operation">
         <name>Copies a block of memory</name>
         <description>Copies a block of memory</description>
         <arguments>
@@ -2864,7 +3126,7 @@
             ].
         </semantic>
     </instruction>
-    <instruction opcode="1121" mnemonic="moveFloat32ToPhysical" kind="operation">
+    <instruction opcode="1134" mnemonic="moveFloat32ToPhysical" kind="operation">
         <name>Move Float32 To Physical Register</name>
         <description>Moves a value into a physical CPU register.</description>
         <arguments>
@@ -2878,7 +3140,7 @@
             self lowcodeCalloutState: lowcodeCalloutState float32Register: registerID value: value.
         </semantic>
     </instruction>
-    <instruction opcode="1122" mnemonic="moveFloat64ToPhysical" kind="operation">
+    <instruction opcode="1135" mnemonic="moveFloat64ToPhysical" kind="operation">
         <name>Move Float64 Register To Physical Register</name>
         <description>Moves the content of a logical register into a physical CPU register.</description>
         <arguments>
@@ -2892,7 +3154,7 @@
             self lowcodeCalloutState: lowcodeCalloutState float64Register: registerID value: value.
         </semantic>
     </instruction>
-    <instruction opcode="1123" mnemonic="moveInt32ToPhysical" kind="operation">
+    <instruction opcode="1136" mnemonic="moveInt32ToPhysical" kind="operation">
         <name>Move Int32  To Physical Register</name>
         <description>Moves a value into a physical CPU register.</description>
         <arguments>
@@ -2906,7 +3168,7 @@
             self lowcodeCalloutState: lowcodeCalloutState int32Register: registerID value: value.
         </semantic>
     </instruction>
-    <instruction opcode="1124" mnemonic="moveInt64ToPhysical" kind="operation">
+    <instruction opcode="1137" mnemonic="moveInt64ToPhysical" kind="operation">
         <name>Move Int64 To Physical Register</name>
         <description>Moves a value into a physical CPU register.</description>
         <arguments>
@@ -2920,7 +3182,7 @@
             self lowcodeCalloutState: lowcodeCalloutState int64Register: registerID value: value.
         </semantic>
     </instruction>
-    <instruction opcode="1125" mnemonic="movePointerToPhysical" kind="operation">
+    <instruction opcode="1138" mnemonic="movePointerToPhysical" kind="operation">
         <name>Move Pointer To Physical Register</name>
         <description>Moves a value into a physical CPU register.</description>
         <arguments>
@@ -2934,7 +3196,7 @@
             self lowcodeCalloutState: lowcodeCalloutState pointerRegister: registerID value: pointerValue.
         </semantic>
     </instruction>
-    <instruction opcode="1126" mnemonic="mul32" kind="operation">
+    <instruction opcode="1139" mnemonic="mul32" kind="operation">
         <name>Integer Signed Multiplication</name>
         <description>Integer multiplication without overflow check.</description>
         <arguments />
@@ -2953,7 +3215,7 @@
             result := first * second.
         </semantic>
     </instruction>
-    <instruction opcode="1127" mnemonic="mul64" kind="operation">
+    <instruction opcode="1140" mnemonic="mul64" kind="operation">
         <name>Integer Signed Multiplication</name>
         <description>Integer multiplication without overflow check.</description>
         <arguments />
@@ -2968,7 +3230,7 @@
             result := first * second.
         </semantic>
     </instruction>
-    <instruction opcode="1128" mnemonic="neg32" kind="operation">
+    <instruction opcode="1141" mnemonic="neg32" kind="operation">
         <name>Integer Negation</name>
         <description>Integer negation.</description>
         <arguments />
@@ -2986,7 +3248,7 @@
             result := value negated.
         </semantic>
     </instruction>
-    <instruction opcode="1129" mnemonic="neg64" kind="operation">
+    <instruction opcode="1142" mnemonic="neg64" kind="operation">
         <name>Integer Negation</name>
         <description>Integer negation.</description>
         <arguments />
@@ -3012,7 +3274,7 @@
 			self ssPushNativeRegister: value.
         </semantic>
     </instruction>
-    <instruction opcode="1130" mnemonic="not32" kind="operation">
+    <instruction opcode="1143" mnemonic="not32" kind="operation">
         <name>Bitwise Not</name>
         <description>Performs a bitwise not.</description>
         <arguments />
@@ -3030,7 +3292,7 @@
             result := value bitXor: -1.
         </semantic>
     </instruction>
-    <instruction opcode="1131" mnemonic="not64" kind="operation">
+    <instruction opcode="1144" mnemonic="not64" kind="operation">
         <name>Bitwise Not</name>
         <description>Performs a bitwise not.</description>
         <arguments />
@@ -3053,7 +3315,7 @@
             self ssPushNativeRegister: value.
         </semantic>
     </instruction>
-    <instruction opcode="1132" mnemonic="or32" kind="operation">
+    <instruction opcode="1145" mnemonic="or32" kind="operation">
         <name>Bitwise Or</name>
         <description>Performs a bitwise or operation.</description>
         <arguments />
@@ -3072,7 +3334,7 @@
             result := first bitOr: second.
         </semantic>
     </instruction>
-    <instruction opcode="1133" mnemonic="or64" kind="operation">
+    <instruction opcode="1146" mnemonic="or64" kind="operation">
         <name>Bitwise Or</name>
         <description>Performs a bitwise or operation.</description>
         <arguments />
@@ -3096,7 +3358,7 @@
             self ssPushNativeRegister: first.
         </semantic>
     </instruction>
-    <instruction opcode="1134" mnemonic="performCallFloat32" kind="operation">
+    <instruction opcode="1147" mnemonic="performCallFloat32" kind="operation">
         <name>Perform function call.</name>
         <description>Performs a function with Float32 result</description>
         <arguments>
@@ -3120,7 +3382,7 @@
             result := self lowcodeCalloutFloat32Result: (self cCoerce: function to: #'char*').
         </semantic>
     </instruction>
-    <instruction opcode="1135" mnemonic="performCallFloat64" kind="operation">
+    <instruction opcode="1148" mnemonic="performCallFloat64" kind="operation">
         <name>Perform function call.</name>
         <description>Performs a function with Float64 result</description>
         <arguments>
@@ -3144,7 +3406,7 @@
             result := self lowcodeCalloutFloat64Result: (self cCoerce: function to: #'char*').
         </semantic>
     </instruction>
-    <instruction opcode="1136" mnemonic="performCallIndirectFloat32" kind="operation">
+    <instruction opcode="1149" mnemonic="performCallIndirectFloat32" kind="operation">
         <name>Perform indirect function call.</name>
         <description>It performs an indirect function with Float32 result.</description>
         <arguments />
@@ -3169,7 +3431,7 @@
             result := self lowcodeCalloutFloat32Result: function.
         </semantic>
     </instruction>
-    <instruction opcode="1137" mnemonic="performCallIndirectFloat64" kind="operation">
+    <instruction opcode="1150" mnemonic="performCallIndirectFloat64" kind="operation">
         <name>Perform indirect function call.</name>
         <description>It erforms an indirect function with Float64 result.</description>
         <arguments />
@@ -3193,7 +3455,7 @@
             result := self lowcodeCalloutFloat64Result: function.
         </semantic>
     </instruction>
-    <instruction opcode="1138" mnemonic="performCallIndirectInt32" kind="operation">
+    <instruction opcode="1151" mnemonic="performCallIndirectInt32" kind="operation">
         <name>Perform indirect function call.</name>
         <description>It performs an indirect function with I32 result.</description>
         <arguments />
@@ -3218,7 +3480,7 @@
             result := self lowcodeCalloutInt32Result: function.
         </semantic>
     </instruction>
-    <instruction opcode="1139" mnemonic="performCallIndirectInt64" kind="operation">
+    <instruction opcode="1152" mnemonic="performCallIndirectInt64" kind="operation">
         <name>Perform indirect function call.</name>
         <description>It performs an indirect function with I64 result.</description>
         <arguments />
@@ -3248,7 +3510,7 @@
             result := self lowcodeCalloutInt64Result: function.
         </semantic>
     </instruction>
-    <instruction opcode="1140" mnemonic="performCallIndirectPointer" kind="operation">
+    <instruction opcode="1153" mnemonic="performCallIndirectPointer" kind="operation">
         <name>Perform indirect function call.</name>
         <description>It performs an indirect function with pointer result.</description>
         <arguments />
@@ -3272,7 +3534,7 @@
             result := self lowcodeCalloutPointerResult: function.
         </semantic>
     </instruction>
-    <instruction opcode="1141" mnemonic="performCallIndirectStructure" kind="operation">
+    <instruction opcode="1154" mnemonic="performCallIndirectStructure" kind="operation">
         <name>Perform indirection function call.</name>
         <description>It performs an indirect function with structure result.</description>
         <arguments>
@@ -3308,7 +3570,26 @@
             resultPointer := self lowcodeCallout: function structureResult: result.
         </semantic>
     </instruction>
-    <instruction opcode="1142" mnemonic="performCallInt32" kind="operation">
+    <instruction opcode="1155" mnemonic="performCallIndirectVoid" kind="operation">
+        <name>Perform indirect function call.</name>
+        <description>It performs an indirect function without a result.</description>
+        <arguments />
+        <stack-arguments>
+            <pointer name="function" />
+        </stack-arguments>
+        <stack-results />
+        <semantic language="Smalltalk/Cog/Raw">
+	        self ssNativeTop nativeStackPopToReg: TempReg.
+	        self ssNativePop: 1.
+
+            self callSwitchToCStack.
+            self CallRT: ceFFICalloutTrampoline.
+        </semantic>
+        <semantic language="Smalltalk/StackInterpreter">
+            self lowcodeCalloutInt32Result: function.
+        </semantic>
+    </instruction>
+    <instruction opcode="1156" mnemonic="performCallInt32" kind="operation">
         <name>Perform function call.</name>
         <description>Performs a function with I32 result</description>
         <arguments>
@@ -3332,7 +3613,7 @@
             result := self lowcodeCalloutInt32Result: (self cCoerce: function to: #'char*').
         </semantic>
     </instruction>
-    <instruction opcode="1143" mnemonic="performCallInt64" kind="operation">
+    <instruction opcode="1157" mnemonic="performCallInt64" kind="operation">
         <name>Perform function call.</name>
         <description>Performs a function with I64 result</description>
         <arguments>
@@ -3361,7 +3642,7 @@
             result := self lowcodeCalloutInt64Result: (self cCoerce: function to: #'char*').
         </semantic>
     </instruction>
-    <instruction opcode="1144" mnemonic="performCallPointer" kind="operation">
+    <instruction opcode="1158" mnemonic="performCallPointer" kind="operation">
         <name>Perform function call.</name>
         <description>Performs a function with pointer result</description>
         <arguments>
@@ -3384,7 +3665,7 @@
             result := self lowcodeCalloutPointerResult: (self cCoerce: function to: #'char*').
         </semantic>
     </instruction>
-    <instruction opcode="1145" mnemonic="performCallStructure" kind="operation">
+    <instruction opcode="1159" mnemonic="performCallStructure" kind="operation">
         <name>Perform function call.</name>
         <description>Performs a function with structure result</description>
         <arguments>
@@ -3419,7 +3700,25 @@
             resultPointer := self lowcodeCalloutPointerResult: (self cCoerce: function to: #'char*').
         </semantic>
     </instruction>
-    <instruction opcode="1146" mnemonic="plaftormCode" kind="operation">
+    <instruction opcode="1160" mnemonic="performCallVoid" kind="operation">
+        <name>Perform function call.</name>
+        <description>Performs a function without a result</description>
+        <arguments>
+            <extend-a name="function" />
+        </arguments>
+        <stack-arguments />
+        <stack-results />
+        <semantic language="Smalltalk/Cog/Raw">
+            self callSwitchToCStack.
+            self MoveCw: extA R: TempReg.
+            self CallRT: ceFFICalloutTrampoline.
+            extA := 0.
+        </semantic>
+        <semantic language="Smalltalk/StackInterpreter">
+            self lowcodeCalloutInt32Result: (self cCoerce: function to: #'char*').
+        </semantic>
+    </instruction>
+    <instruction opcode="1161" mnemonic="plaftormCode" kind="operation">
         <name>Platform Code</name>
         <description>
             Returns the platform code
@@ -3430,7 +3729,7 @@
             <int32 name="code" />
         </stack-results>
     </instruction>
-    <instruction opcode="1147" mnemonic="pointerAddConstantOffset" kind="operation">
+    <instruction opcode="1162" mnemonic="pointerAddConstantOffset" kind="operation">
         <name>Adds an offset to a pointer</name>
         <description>Computes a new pointer by offseting an old one.</description>
         <arguments>
@@ -3450,7 +3749,7 @@
             self ssPushNativeRegister: base.
         </semantic>
     </instruction>
-    <instruction opcode="1148" mnemonic="pointerAddOffset32" kind="operation">
+    <instruction opcode="1163" mnemonic="pointerAddOffset32" kind="operation">
         <name>Adds an offset to a pointer</name>
         <description>Computes a new pointer by offseting an old one.</description>
         <arguments />
@@ -3472,7 +3771,7 @@
             result := base + offset.
         </semantic>
     </instruction>
-    <instruction opcode="1149" mnemonic="pointerAddOffset64" kind="operation">
+    <instruction opcode="1164" mnemonic="pointerAddOffset64" kind="operation">
         <name>Adds an offset to a pointer</name>
         <description>Computes a new pointer by offseting an old one.</description>
         <arguments />
@@ -3495,7 +3794,7 @@
             self ssPushNativeRegister: base.
         </semantic>
     </instruction>
-    <instruction opcode="1150" mnemonic="pointerEqual" kind="operation">
+    <instruction opcode="1165" mnemonic="pointerEqual" kind="operation">
         <name>Pointer Equality</name>
         <description>Pointer equality comparison.</description>
         <arguments />
@@ -3525,7 +3824,7 @@
             value := first = second ifTrue: [1] ifFalse: [0].
         </semantic>
     </instruction>
-    <instruction opcode="1151" mnemonic="pointerNotEqual" kind="operation">
+    <instruction opcode="1166" mnemonic="pointerNotEqual" kind="operation">
         <name>Pointer Not Equality</name>
         <description>Pointer not equality comparison.</description>
         <arguments />
@@ -3555,7 +3854,7 @@
             value := first ~= second ifTrue: [1] ifFalse: [0].
         </semantic>
     </instruction>
-    <instruction opcode="1152" mnemonic="pointerToInt32" kind="operation">
+    <instruction opcode="1167" mnemonic="pointerToInt32" kind="operation">
         <name>Pointer to Int32</name>
         <description>It converts a pointer into a 32-bit integer.</description>
         <arguments />
@@ -3573,7 +3872,7 @@
             result := self cCoerce: pointer to: 'uintptr_t'.
         </semantic>
     </instruction>
-    <instruction opcode="1153" mnemonic="pointerToInt64" kind="operation">
+    <instruction opcode="1168" mnemonic="pointerToInt64" kind="operation">
         <name>Pointer to Int64</name>
         <description>It converts a pointer into a 64-bit integer.</description>
         <arguments />
@@ -3595,7 +3894,7 @@
             self ssPushNativeRegister: pointer.
         </semantic>
     </instruction>
-    <instruction opcode="1154" mnemonic="popFloat32" kind="operation">
+    <instruction opcode="1169" mnemonic="popFloat32" kind="operation">
         <name>Pop Float32</name>
         <description>It removes the Float32 present in the top of the stack</description>
         <arguments />
@@ -3609,7 +3908,7 @@
         <semantic language="Smalltalk/StackInterpreter" />
         <semantic language="C++/LLVM" />
     </instruction>
-    <instruction opcode="1155" mnemonic="popFloat64" kind="operation">
+    <instruction opcode="1170" mnemonic="popFloat64" kind="operation">
         <name>Pop Float64</name>
         <description>It removes the Float64 present in the top of the stack</description>
         <arguments />
@@ -3623,7 +3922,7 @@
         <semantic language="Smalltalk/StackInterpreter" />
         <semantic language="C++/LLVM" />
     </instruction>
-    <instruction opcode="1156" mnemonic="popInt32" kind="operation">
+    <instruction opcode="1171" mnemonic="popInt32" kind="operation">
         <name>Pop Int32</name>
         <description>It removes the Int32 present in the top of the stack</description>
         <arguments />
@@ -3637,7 +3936,7 @@
         <semantic language="Smalltalk/StackInterpreter" />
         <semantic language="C++/LLVM" />
     </instruction>
-    <instruction opcode="1157" mnemonic="popInt64" kind="operation">
+    <instruction opcode="1172" mnemonic="popInt64" kind="operation">
         <name>Pop Int64</name>
         <description>It removes the Int64 present in the top of the stack</description>
         <arguments />
@@ -3651,7 +3950,7 @@
         <semantic language="Smalltalk/StackInterpreter" />
         <semantic language="C++/LLVM" />
     </instruction>
-    <instruction opcode="1158" mnemonic="popPointer" kind="operation">
+    <instruction opcode="1173" mnemonic="popPointer" kind="operation">
         <name>Pop Pointer</name>
         <description>It removes the Pointer present in the top of the stack</description>
         <arguments />
@@ -3665,7 +3964,7 @@
         <semantic language="Smalltalk/StackInterpreter" />
         <semantic language="C++/LLVM" />
     </instruction>
-    <instruction opcode="1159" mnemonic="pushConstantUInt32" kind="operation">
+    <instruction opcode="1174" mnemonic="pushConstantUInt32" kind="operation">
         <name>Push a 32-bit integer constant</name>
         <description>Pushes a 32-bit integer constant.</description>
         <arguments>
@@ -3682,7 +3981,7 @@
             result := constant.
         </semantic>
     </instruction>
-    <instruction opcode="1160" mnemonic="pushConstantUInt64" kind="operation">
+    <instruction opcode="1175" mnemonic="pushConstantUInt64" kind="operation">
         <name>Push a 64-bit integer constant</name>
         <description>Pushes a 64-bit integer constant.</description>
         <arguments>
@@ -3699,7 +3998,7 @@
             result := constant.
         </semantic>
     </instruction>
-    <instruction opcode="1161" mnemonic="pushNullPointer" kind="operation">
+    <instruction opcode="1176" mnemonic="pushNullPointer" kind="operation">
         <name>Push Null Pointer</name>
         <description>It pushes a null pointer</description>
         <arguments />
@@ -3714,7 +4013,7 @@
             result := 0.
         </semantic>
     </instruction>
-    <instruction opcode="1162" mnemonic="pushOne32" kind="operation">
+    <instruction opcode="1177" mnemonic="pushOne32" kind="operation">
         <name>Push one constant 32-bit integer</name>
         <description>Pushes a 32 bit one constant</description>
         <arguments />
@@ -3729,7 +4028,7 @@
             result := 1.
         </semantic>
     </instruction>
-    <instruction opcode="1163" mnemonic="pushOne64" kind="operation">
+    <instruction opcode="1178" mnemonic="pushOne64" kind="operation">
         <name>Push one constant 64-bit integer</name>
         <description>Pushes a 64 bit one constant</description>
         <arguments />
@@ -3744,7 +4043,7 @@
             result := 1.
         </semantic>
     </instruction>
-    <instruction opcode="1164" mnemonic="pushOneFloat32" kind="operation">
+    <instruction opcode="1179" mnemonic="pushOneFloat32" kind="operation">
         <name>Push a single precision one constant</name>
         <description>It pushes a single precision float of one</description>
         <arguments />
@@ -3759,7 +4058,7 @@
             result := 1.0.
         </semantic>
     </instruction>
-    <instruction opcode="1165" mnemonic="pushOneFloat64" kind="operation">
+    <instruction opcode="1180" mnemonic="pushOneFloat64" kind="operation">
         <name>Push a single precision one constant</name>
         <description>It pushes a single precision float of one</description>
         <arguments />
@@ -3774,7 +4073,7 @@
             result := 1.0.
         </semantic>
     </instruction>
-    <instruction opcode="1166" mnemonic="pushPhysicalFloat32" kind="operation">
+    <instruction opcode="1181" mnemonic="pushPhysicalFloat32" kind="operation">
         <name>Push Float32 from physical register</name>
         <description>Pushes a Float32 from a physical CPU register.</description>
         <arguments>
@@ -3788,7 +4087,7 @@
             value := self lowcodeCalloutState: lowcodeCalloutState float32Register: registerID.
         </semantic>
     </instruction>
-    <instruction opcode="1167" mnemonic="pushPhysicalFloat64" kind="operation">
+    <instruction opcode="1182" mnemonic="pushPhysicalFloat64" kind="operation">
         <name>Push Float64 from physical register</name>
         <description>Pushes an Float64 from a physical CPU register.</description>
         <arguments>
@@ -3802,7 +4101,7 @@
             value := self lowcodeCalloutState: lowcodeCalloutState float64Register: registerID.
         </semantic>
     </instruction>
-    <instruction opcode="1168" mnemonic="pushPhysicalInt32" kind="operation">
+    <instruction opcode="1183" mnemonic="pushPhysicalInt32" kind="operation">
         <name>Push Int32 from physical register</name>
         <description>Pushes an Int32 from a physical CPU register.</description>
         <arguments>
@@ -3816,7 +4115,7 @@
             value := self lowcodeCalloutState: lowcodeCalloutState int32Register: registerID.
         </semantic>
     </instruction>
-    <instruction opcode="1169" mnemonic="pushPhysicalInt64" kind="operation">
+    <instruction opcode="1184" mnemonic="pushPhysicalInt64" kind="operation">
         <name>Push Int64 from physical register</name>
         <description>Pushes an Int64 from a physical CPU register.</description>
         <arguments>
@@ -3830,7 +4129,7 @@
             value := self lowcodeCalloutState: lowcodeCalloutState int64Register: registerID.
         </semantic>
     </instruction>
-    <instruction opcode="1170" mnemonic="pushPhysicalPointer" kind="operation">
+    <instruction opcode="1185" mnemonic="pushPhysicalPointer" kind="operation">
         <name>Push Pointer from physical register</name>
         <description>Pushes a pointer from a physical CPU register.</description>
         <arguments>
@@ -3844,7 +4143,7 @@
             pointerValue := self lowcodeCalloutState: lowcodeCalloutState pointerRegister: registerID.
         </semantic>
     </instruction>
-    <instruction opcode="1171" mnemonic="pushSessionIdentifier" kind="operation">
+    <instruction opcode="1186" mnemonic="pushSessionIdentifier" kind="operation">
         <name>Pushes the unique session identifier</name>
         <description>Computes a new pointer by offseting an old one.</description>
         <arguments />
@@ -3859,7 +4158,7 @@
             value := self getThisSessionID.
         </semantic>
     </instruction>
-    <instruction opcode="1172" mnemonic="pushZero32" kind="operation">
+    <instruction opcode="1187" mnemonic="pushZero32" kind="operation">
         <name>Pushes zero constant</name>
         <description>Pushes a 32 bit zero</description>
         <arguments />
@@ -3874,7 +4173,7 @@
             result := 0.
         </semantic>
     </instruction>
-    <instruction opcode="1173" mnemonic="pushZero64" kind="operation">
+    <instruction opcode="1188" mnemonic="pushZero64" kind="operation">
         <name>Pushes zero constant</name>
         <description>Pushes a 64 bit zero</description>
         <arguments />
@@ -3889,7 +4188,7 @@
             result := 0.
         </semantic>
     </instruction>
-    <instruction opcode="1174" mnemonic="pushZeroFloat32" kind="operation">
+    <instruction opcode="1189" mnemonic="pushZeroFloat32" kind="operation">
         <name>Pushes a zero single precision float constant</name>
         <description>It pushes a single precision float zero</description>
         <arguments />
@@ -3904,7 +4203,7 @@
             result := 0.0.
         </semantic>
     </instruction>
-    <instruction opcode="1175" mnemonic="pushZeroFloat64" kind="operation">
+    <instruction opcode="1190" mnemonic="pushZeroFloat64" kind="operation">
         <name>Pushes a zero single precision float constant</name>
         <description>It pushes a single precision float zero</description>
         <arguments />
@@ -3919,7 +4218,7 @@
             result := 0.0.
         </semantic>
     </instruction>
-    <instruction opcode="1176" mnemonic="rem32" kind="operation">
+    <instruction opcode="1191" mnemonic="rem32" kind="operation">
         <name>Integer Signed Remainder</name>
         <description>Integer signed remainder without overflow check.</description>
         <arguments />
@@ -3938,7 +4237,7 @@
             result := first \\ second.
         </semantic>
     </instruction>
-    <instruction opcode="1177" mnemonic="rem64" kind="operation">
+    <instruction opcode="1192" mnemonic="rem64" kind="operation">
         <name>Integer Signed Remainder</name>
         <description>Integer signed remainder without overflow check.</description>
         <arguments />
@@ -3953,7 +4252,7 @@
             result := first \\ second.
         </semantic>
     </instruction>
-    <instruction opcode="1178" mnemonic="rightShift32" kind="operation">
+    <instruction opcode="1193" mnemonic="rightShift32" kind="operation">
         <name>Right Shift</name>
         <description>Performs a right shifting.</description>
         <arguments />
@@ -3972,7 +4271,7 @@
             result := value &gt;&gt; shiftAmount.
         </semantic>
     </instruction>
-    <instruction opcode="1179" mnemonic="rightShift64" kind="operation">
+    <instruction opcode="1194" mnemonic="rightShift64" kind="operation">
         <name>Right Shift</name>
         <description>Performs a right shifting.</description>
         <arguments />
@@ -3987,7 +4286,7 @@
             result := value &gt;&gt; shiftAmount.
         </semantic>
     </instruction>
-    <instruction opcode="1180" mnemonic="signExtend32From16" kind="operation">
+    <instruction opcode="1195" mnemonic="signExtend32From16" kind="operation">
         <name>Sign Extend 16-bit</name>
         <description>Sign extends a 16 bit integer value.</description>
         <arguments />
@@ -4005,7 +4304,7 @@
             result := self cCoerce: value to: 'signed short'.
         </semantic>
     </instruction>
-    <instruction opcode="1181" mnemonic="signExtend32From8" kind="operation">
+    <instruction opcode="1196" mnemonic="signExtend32From8" kind="operation">
         <name>Sign Extend 8-bit</name>
         <description>Sign extends a 8-bit integer value.</description>
         <arguments />
@@ -4023,7 +4322,7 @@
             result := self cCoerce: value to: 'signed char'.
         </semantic>
     </instruction>
-    <instruction opcode="1182" mnemonic="signExtend64From16" kind="operation">
+    <instruction opcode="1197" mnemonic="signExtend64From16" kind="operation">
         <name>Sign Extend 16-bit</name>
         <description>Sign extends a 16 bit integer value.</description>
         <arguments />
@@ -4058,7 +4357,7 @@
             self ssPushNativeRegister: value.
         </semantic>
     </instruction>
-    <instruction opcode="1183" mnemonic="signExtend64From32" kind="operation">
+    <instruction opcode="1198" mnemonic="signExtend64From32" kind="operation">
         <name>Sign Extend 32-bit</name>
         <description>Sign extends a 32 bit integer value.</description>
         <arguments />
@@ -4092,7 +4391,7 @@
             self ssPushNativeRegister: value.
         </semantic>
     </instruction>
-    <instruction opcode="1184" mnemonic="signExtend64From8" kind="operation">
+    <instruction opcode="1199" mnemonic="signExtend64From8" kind="operation">
         <name>Sign Extend 8-bit</name>
         <description>Sign extends a 8-bit integer value.</description>
         <arguments />
@@ -4127,7 +4426,7 @@
             self ssPushNativeRegister: value.
         </semantic>
     </instruction>
-    <instruction opcode="1185" mnemonic="storeFloat32ToMemory" kind="operation">
+    <instruction opcode="1200" mnemonic="storeFloat32ToMemory" kind="operation">
         <name>Store Float32 in memory</name>
         <description>Stores a Float32 value to the memory.</description>
         <arguments />
@@ -4143,7 +4442,7 @@
             self singleFloatAtPointer: pointer put: floatValue.
         </semantic>
     </instruction>
-    <instruction opcode="1186" mnemonic="storeFloat64ToMemory" kind="operation">
+    <instruction opcode="1201" mnemonic="storeFloat64ToMemory" kind="operation">
         <name>Store Float64 in memory</name>
         <description>Stores a Float64 value to the memory.</description>
         <arguments />
@@ -4159,7 +4458,7 @@
             self floatAtPointer: pointer put: doubleValue.
         </semantic>
     </instruction>
-    <instruction opcode="1187" mnemonic="storeInt16ToMemory" kind="operation">
+    <instruction opcode="1202" mnemonic="storeInt16ToMemory" kind="operation">
         <name>Store UInt16 in memory</name>
         <description>Stores an U16 value to the memory.</description>
         <arguments />
@@ -4176,7 +4475,7 @@
             self int16AtPointer: pointer put: value.
         </semantic>
     </instruction>
-    <instruction opcode="1188" mnemonic="storeInt32ToMemory" kind="operation">
+    <instruction opcode="1203" mnemonic="storeInt32ToMemory" kind="operation">
         <name>Store Int32 in memory</name>
         <description>Stores an I32 value to the memory.</description>
         <arguments />
@@ -4192,7 +4491,7 @@
             self int32AtPointer: pointer put: value.
         </semantic>
     </instruction>
-    <instruction opcode="1189" mnemonic="storeInt64ToMemory" kind="operation">
+    <instruction opcode="1204" mnemonic="storeInt64ToMemory" kind="operation">
         <name>Store Int64 in memory</name>
         <description>It stores an I64 value to the memory.</description>
         <arguments />
@@ -4212,7 +4511,7 @@
             self MoveR: value M64: 0 r: pointer.
         </semantic>
     </instruction>
-    <instruction opcode="1190" mnemonic="storeInt8ToMemory" kind="operation">
+    <instruction opcode="1205" mnemonic="storeInt8ToMemory" kind="operation">
         <name>Store UInt8 in memory</name>
         <description>Stores an U8 value to the memory.</description>
         <arguments />
@@ -4229,7 +4528,7 @@
             self int8AtPointer: pointer put: value.
         </semantic>
     </instruction>
-    <instruction opcode="1191" mnemonic="storeLocalFloat32" kind="operation">
+    <instruction opcode="1206" mnemonic="storeLocalFloat32" kind="operation">
         <name>Store single precision float in the stack frame</name>
         <description>It stores a single precision float in the stack frame..</description>
         <arguments>
@@ -4247,7 +4546,7 @@
             stackPages singleFloatAtPointer: (self framePointerOfNativeLocal: baseOffset in: localFP) put: value.
         </semantic>
     </instruction>
-    <instruction opcode="1192" mnemonic="storeLocalFloat64" kind="operation">
+    <instruction opcode="1207" mnemonic="storeLocalFloat64" kind="operation">
         <name>Store double precision float in the stack frame</name>
         <description>It stores a double precision float in the stack frame.</description>
         <arguments>
@@ -4265,7 +4564,7 @@
             stackPages floatAtPointer: (self framePointerOfNativeLocal: baseOffset in: localFP) put: value.
         </semantic>
     </instruction>
-    <instruction opcode="1193" mnemonic="storeLocalInt16" kind="operation">
+    <instruction opcode="1208" mnemonic="storeLocalInt16" kind="operation">
         <name>Store I16 to stack frame</name>
         <description>It stores an I16 to the stack frame memory.</description>
         <arguments>
@@ -4284,7 +4583,7 @@
             stackPages int16AtPointer: (self framePointerOfNativeLocal: baseOffset in: localFP) put: value.
         </semantic>
     </instruction>
-    <instruction opcode="1194" mnemonic="storeLocalInt32" kind="operation">
+    <instruction opcode="1209" mnemonic="storeLocalInt32" kind="operation">
         <name>Store I32 to stack frame</name>
         <description>It stores an I32 to the stack frame memory.</description>
         <arguments>
@@ -4302,7 +4601,7 @@
             stackPages int32AtPointer: (self framePointerOfNativeLocal: baseOffset in: localFP) put: value.
         </semantic>
     </instruction>
-    <instruction opcode="1195" mnemonic="storeLocalInt64" kind="operation">
+    <instruction opcode="1210" mnemonic="storeLocalInt64" kind="operation">
         <name>Store I64 to stack frame</name>
         <description>It stores an I64 to the stack frame memory.</description>
         <arguments>
@@ -4334,7 +4633,7 @@
             extA := 0.
         </semantic>
     </instruction>
-    <instruction opcode="1196" mnemonic="storeLocalInt8" kind="operation">
+    <instruction opcode="1211" mnemonic="storeLocalInt8" kind="operation">
         <name>Store I8 to stack frame</name>
         <description>It stores an I8 to the stack frame memory.</description>
         <arguments>
@@ -4353,7 +4652,7 @@
             stackPages int8AtPointer: (self framePointerOfNativeLocal: baseOffset in: localFP) put: value.
         </semantic>
     </instruction>
-    <instruction opcode="1197" mnemonic="storeLocalPointer" kind="operation">
+    <instruction opcode="1212" mnemonic="storeLocalPointer" kind="operation">
         <name>Store pointer in the stack frame</name>
         <description>It stores a pointer in the stack frame memory.</description>
         <arguments>
@@ -4371,7 +4670,7 @@
             stackPages pointerAtPointer: (self framePointerOfNativeLocal: baseOffset in: localFP) put: pointerValue.
         </semantic>
     </instruction>
-    <instruction opcode="1198" mnemonic="storePointerToMemory" kind="operation">
+    <instruction opcode="1213" mnemonic="storePointerToMemory" kind="operation">
         <name>Store a pointer in memory</name>
         <description>Stores pointer int the memory.</description>
         <arguments />
@@ -4387,7 +4686,7 @@
             self pointerAtPointer: memoryPointer put: pointerValue.
         </semantic>
     </instruction>
-    <instruction opcode="1199" mnemonic="sub32" kind="operation">
+    <instruction opcode="1214" mnemonic="sub32" kind="operation">
         <name>Integer Subtraction</name>
         <description>Integer subtraction without overflow check.</description>
         <arguments />
@@ -4406,7 +4705,7 @@
             result := first - second.
         </semantic>
     </instruction>
-    <instruction opcode="1200" mnemonic="sub64" kind="operation">
+    <instruction opcode="1215" mnemonic="sub64" kind="operation">
         <name>Integer Subtraction</name>
         <description>Integer subtraction without overflow check.</description>
         <arguments />
@@ -4430,7 +4729,7 @@
 			self ssPushNativeRegister: first.
         </semantic>
     </instruction>
-    <instruction opcode="1201" mnemonic="truncate32To16" kind="operation">
+    <instruction opcode="1216" mnemonic="truncate32To16" kind="operation">
         <name>Truncate 32-bit to 16-bit integer</name>
         <description>Truncates an integer value.</description>
         <arguments />
@@ -4448,7 +4747,7 @@
             result := value bitAnd: 16rFFFF.
         </semantic>
     </instruction>
-    <instruction opcode="1202" mnemonic="truncate32To8" kind="operation">
+    <instruction opcode="1217" mnemonic="truncate32To8" kind="operation">
         <name>Truncate 32-bit to 8-bit integer</name>
         <description>Truncates an integer value.</description>
         <arguments />
@@ -4466,7 +4765,7 @@
             result := value bitAnd: 16rFF.
         </semantic>
     </instruction>
-    <instruction opcode="1203" mnemonic="truncate64To16" kind="operation">
+    <instruction opcode="1218" mnemonic="truncate64To16" kind="operation">
         <name>Truncate 64-bit to 16-bit integer</name>
         <description>Truncates an integer value.</description>
         <arguments />
@@ -4488,7 +4787,7 @@
             self ssPushNativeRegister: value.
         </semantic>
     </instruction>
-    <instruction opcode="1204" mnemonic="truncate64To32" kind="operation">
+    <instruction opcode="1219" mnemonic="truncate64To32" kind="operation">
         <name>Truncate 64-bit to 32-bit integer</name>
         <description>Truncates an integer value.</description>
         <arguments />
@@ -4509,7 +4808,7 @@
             self ssPushNativeRegister: value.
         </semantic>
     </instruction>
-    <instruction opcode="1205" mnemonic="truncate64To8" kind="operation">
+    <instruction opcode="1220" mnemonic="truncate64To8" kind="operation">
         <name>Truncate 64-bit to 8-bit integer</name>
         <description>Truncates an integer value.</description>
         <arguments />
@@ -4531,7 +4830,7 @@
             self ssPushNativeRegister: value.
         </semantic>
     </instruction>
-    <instruction opcode="1206" mnemonic="udiv32" kind="operation">
+    <instruction opcode="1221" mnemonic="udiv32" kind="operation">
         <name>Integer Unsigned division</name>
         <description>Integer unsigned division without overflow check.</description>
         <arguments />
@@ -4551,7 +4850,7 @@
                         (self cCoerce: second to: 'unsigned int').
         </semantic>
     </instruction>
-    <instruction opcode="1207" mnemonic="udiv64" kind="operation">
+    <instruction opcode="1222" mnemonic="udiv64" kind="operation">
         <name>Integer Unsigned division</name>
         <description>Integer unsigned division without overflow check.</description>
         <arguments />
@@ -4567,7 +4866,7 @@
                         (self cCoerce: second to: 'uint64_t').
         </semantic>
     </instruction>
-    <instruction opcode="1208" mnemonic="uint32Great" kind="operation">
+    <instruction opcode="1223" mnemonic="uint32Great" kind="operation">
         <name>UInt32 Great Than</name>
         <description>UInt32 great than.</description>
         <arguments />
@@ -4598,7 +4897,7 @@
                         (self cCoerce: second to: 'unsigned int') ifTrue: [1] ifFalse: [0].
         </semantic>
     </instruction>
-    <instruction opcode="1209" mnemonic="uint32GreatEqual" kind="operation">
+    <instruction opcode="1224" mnemonic="uint32GreatEqual" kind="operation">
         <name>UInt32 Great or Equal Than</name>
         <description>UInt32 great or equal than.</description>
         <arguments />
@@ -4629,7 +4928,7 @@
                         (self cCoerce: second to: 'unsigned int') ifTrue: [1] ifFalse: [0].
         </semantic>
     </instruction>
-    <instruction opcode="1210" mnemonic="uint32Less" kind="operation">
+    <instruction opcode="1225" mnemonic="uint32Less" kind="operation">
         <name>UInt32 Less Than</name>
         <description>UInt32 not equal.</description>
         <arguments />
@@ -4660,7 +4959,7 @@
                         (self cCoerce: second to: 'unsigned int') ifTrue: [1] ifFalse: [0].
         </semantic>
     </instruction>
-    <instruction opcode="1211" mnemonic="uint32LessEqual" kind="operation">
+    <instruction opcode="1226" mnemonic="uint32LessEqual" kind="operation">
         <name>UInt32 Less or Equal Than</name>
         <description>UInt32 less equal.</description>
         <arguments />
@@ -4691,7 +4990,7 @@
                         (self cCoerce: second to: 'unsigned int') ifTrue: [1] ifFalse: [0].
         </semantic>
     </instruction>
-    <instruction opcode="1212" mnemonic="uint32ToFloat32" kind="operation">
+    <instruction opcode="1227" mnemonic="uint32ToFloat32" kind="operation">
         <name>UInt32 to Float32</name>
         <description>Converts an unsigned integer into a floating point number.</description>
         <arguments />
@@ -4709,7 +5008,7 @@
             result := self cCoerce: (self cCoerce: value to: 'unsigned int') to: 'float'.
         </semantic>
     </instruction>
-    <instruction opcode="1213" mnemonic="uint32ToFloat64" kind="operation">
+    <instruction opcode="1228" mnemonic="uint32ToFloat64" kind="operation">
         <name>UInt32 to Float64</name>
         <description>Converts an unsigned integer into a floating point number.</description>
         <arguments />
@@ -4727,7 +5026,7 @@
             result := self cCoerce: (self cCoerce: value to: 'unsigned int') to: 'double'.
         </semantic>
     </instruction>
-    <instruction opcode="1214" mnemonic="uint64Great" kind="operation">
+    <instruction opcode="1229" mnemonic="uint64Great" kind="operation">
         <name>UInt32 Great Than</name>
         <description>UInt64 great than.</description>
         <arguments />
@@ -4743,7 +5042,7 @@
                         (self cCoerce: second to: 'uint64_t') ifTrue: [1] ifFalse: [0].
         </semantic>
     </instruction>
-    <instruction opcode="1215" mnemonic="uint64GreatEqual" kind="operation">
+    <instruction opcode="1230" mnemonic="uint64GreatEqual" kind="operation">
         <name>UInt64 Great or Equal Than</name>
         <description>UInt64 great or equal than.</description>
         <arguments />
@@ -4759,7 +5058,7 @@
                         (self cCoerce: second to: 'uint64_t') ifTrue: [1] ifFalse: [0].
         </semantic>
     </instruction>
-    <instruction opcode="1216" mnemonic="uint64Less" kind="operation">
+    <instruction opcode="1231" mnemonic="uint64Less" kind="operation">
         <name>UInt64 Less Than</name>
         <description>UInt64 not equal.</description>
         <arguments />
@@ -4775,7 +5074,7 @@
                         (self cCoerce: second to: 'uint64_t') ifTrue: [1] ifFalse: [0].
         </semantic>
     </instruction>
-    <instruction opcode="1217" mnemonic="uint64LessEqual" kind="operation">
+    <instruction opcode="1232" mnemonic="uint64LessEqual" kind="operation">
         <name>UInt64 Less or Equal Than</name>
         <description>UInt64 less equal.</description>
         <arguments />
@@ -4791,7 +5090,7 @@
                         (self cCoerce: second to: 'uint64_t') ifTrue: [1] ifFalse: [0].
         </semantic>
     </instruction>
-    <instruction opcode="1218" mnemonic="uint64ToFloat32" kind="operation">
+    <instruction opcode="1233" mnemonic="uint64ToFloat32" kind="operation">
         <name>UInt64 to Float32</name>
         <description>Converts an unsigned integer into a floating point number.</description>
         <arguments />
@@ -4805,7 +5104,7 @@
             result := self cCoerce: (self cCoerce: value to: 'uint64_t') to: 'float'.
         </semantic>
     </instruction>
-    <instruction opcode="1219" mnemonic="uint64ToFloat64" kind="operation">
+    <instruction opcode="1234" mnemonic="uint64ToFloat64" kind="operation">
         <name>UInt64 to Float64</name>
         <description>Converts an unsigned integer into a floating point number.</description>
         <arguments />
@@ -4819,7 +5118,7 @@
             result := self cCoerce: (self cCoerce: value to: 'uint64_t') to: 'double'.
         </semantic>
     </instruction>
-    <instruction opcode="1220" mnemonic="umul32" kind="operation">
+    <instruction opcode="1235" mnemonic="umul32" kind="operation">
         <name>Integer Unsigned Multiplication</name>
         <description>Integer addition without overflow check.</description>
         <arguments />
@@ -4839,7 +5138,7 @@
                         (self cCoerce: second to: 'unsigned int').
         </semantic>
     </instruction>
-    <instruction opcode="1221" mnemonic="umul64" kind="operation">
+    <instruction opcode="1236" mnemonic="umul64" kind="operation">
         <name>Integer Unsigned Multiplication</name>
         <description>Integer addition without overflow check.</description>
         <arguments />
@@ -4855,7 +5154,7 @@
                         (self cCoerce: second to: 'uint64_t').
         </semantic>
     </instruction>
-    <instruction opcode="1222" mnemonic="unlockRegisters" kind="operation">
+    <instruction opcode="1237" mnemonic="unlockRegisters" kind="operation">
         <name>Unlock Registers</name>
         <description>
             Unlocks the CPU register. This tells the register allocator that the
@@ -4868,14 +5167,14 @@
             "Do nothing for now"
         </semantic>
     </instruction>
-    <instruction opcode="1223" mnemonic="unlockVM" kind="operation">
+    <instruction opcode="1238" mnemonic="unlockVM" kind="operation">
         <name>Unlock VM</name>
         <description>Unlocks the VM from the current thread.</description>
         <arguments />
         <stack-arguments />
         <stack-results />
     </instruction>
-    <instruction opcode="1224" mnemonic="urem32" kind="operation">
+    <instruction opcode="1239" mnemonic="urem32" kind="operation">
         <name>Integer Unsigned remainder</name>
         <description>Integer unsigned remainder without overflow check.</description>
         <arguments />
@@ -4895,7 +5194,7 @@
                         (self cCoerce: second to: 'unsigned int').
         </semantic>
     </instruction>
-    <instruction opcode="1225" mnemonic="urem64" kind="operation">
+    <instruction opcode="1240" mnemonic="urem64" kind="operation">
         <name>Integer Unsigned remainder</name>
         <description>Integer unsigned remainder without overflow check.</description>
         <arguments />
@@ -4911,7 +5210,7 @@
                         (self cCoerce: second to: 'unsigned int').
         </semantic>
     </instruction>
-    <instruction opcode="1226" mnemonic="xor32" kind="operation">
+    <instruction opcode="1241" mnemonic="xor32" kind="operation">
         <name>Bitwise Xor</name>
         <description>Performs a bitwise xor operation.</description>
         <arguments />
@@ -4930,7 +5229,7 @@
             result := first bitXor: second.
         </semantic>
     </instruction>
-    <instruction opcode="1227" mnemonic="xor64" kind="operation">
+    <instruction opcode="1242" mnemonic="xor64" kind="operation">
         <name>Bitwise Xor</name>
         <description>Performs a bitwise xor operation.</description>
         <arguments />
@@ -4954,7 +5253,7 @@
             self ssPushNativeRegister: first.
         </semantic>
     </instruction>
-    <instruction opcode="1228" mnemonic="zeroExtend32From16" kind="operation">
+    <instruction opcode="1243" mnemonic="zeroExtend32From16" kind="operation">
         <name>Zero Extend 16-bit</name>
         <description>Zero extends a 16 bit integer value.</description>
         <arguments />
@@ -4972,7 +5271,7 @@
             result := self cCoerce: value to: 'uint16_t'.
         </semantic>
     </instruction>
-    <instruction opcode="1229" mnemonic="zeroExtend32From8" kind="operation">
+    <instruction opcode="1244" mnemonic="zeroExtend32From8" kind="operation">
         <name>Zero Extend 8-bit</name>
         <description>Zero extends a 8-bit integer value.</description>
         <arguments />
@@ -4990,7 +5289,7 @@
             result := self cCoerce: value to: 'uint8_t'.
         </semantic>
     </instruction>
-    <instruction opcode="1230" mnemonic="zeroExtend64From16" kind="operation">
+    <instruction opcode="1245" mnemonic="zeroExtend64From16" kind="operation">
         <name>Sign Extend 16-bit</name>
         <description>Sign extends a 16 bit integer value.</description>
         <arguments />
@@ -5013,7 +5312,7 @@
             self ssPushNativeRegister: value.
         </semantic>
     </instruction>
-    <instruction opcode="1231" mnemonic="zeroExtend64From32" kind="operation">
+    <instruction opcode="1246" mnemonic="zeroExtend64From32" kind="operation">
         <name>Sign Extend 32-bit</name>
         <description>Sign extends a 32 bit integer value.</description>
         <arguments />
@@ -5036,7 +5335,7 @@
             self ssPushNativeRegister: value.
         </semantic>
     </instruction>
-    <instruction opcode="1232" mnemonic="zeroExtend64From8" kind="operation">
+    <instruction opcode="1247" mnemonic="zeroExtend64From8" kind="operation">
         <name>Zero Extend 8-bit</name>
         <description>Zero extends a 8-bit integer value.</description>
         <arguments />
