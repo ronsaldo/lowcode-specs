@@ -878,7 +878,7 @@
         <semantic language="Smalltalk/StackInterpreter">
             "Restore the shadow stack pointer"
             shadowCallStackPointer := (self shadowCallStackPointerIn: localFP) - 1.
-            self shadowCallStackPointerIn: localFP put: 1.
+            self shadowCallStackPointerIn: localFP put: (self cCoerce: 1 to: #'char*').
         </semantic>
     </instruction>
     <instruction opcode="1030" mnemonic="endCallNoCleanup" kind="operation">
@@ -893,7 +893,7 @@
         <semantic language="Smalltalk/StackInterpreter">
             "Restore the shadow stack pointer"
             shadowCallStackPointer := (self shadowCallStackPointerIn: localFP) - 1.
-            self shadowCallStackPointerIn: localFP put: 1.
+            self shadowCallStackPointerIn: localFP put: (self cCoerce: 1 to: #'char*').
         </semantic>
     </instruction>
     <instruction opcode="1031" mnemonic="float32Add" kind="operation">
@@ -3950,7 +3950,7 @@
         <semantic language="Smalltalk/StackInterpreter" />
         <semantic language="C++/LLVM" />
     </instruction>
-    <instruction opcode="1173" mnemonic="popMultipleNative" kind="operation">
+    <instruction opcode="1173" mnemonic="popMultipleNative" kind="multipop">
         <name>Pop Pointer</name>
         <description>It removes the Pointer present in the top of the stack</description>
         <arguments>
@@ -3958,6 +3958,15 @@
         </arguments>
         <stack-arguments />
         <stack-results />
+
+        <semantic language="Smalltalk/Cog/Raw">
+            self ssPopNativeSize: extA.
+            extA := 0.
+        </semantic>
+
+        <semantic language="Smalltalk/StackInterpreter" >
+            self internalPopStackNativeSize: popSize.
+        </semantic>
     </instruction>
     <instruction opcode="1174" mnemonic="popPointer" kind="operation">
         <name>Pop Pointer</name>
